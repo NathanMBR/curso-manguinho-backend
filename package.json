@@ -1,0 +1,12 @@
+{
+  "name": "curso-manguinho-backend",
+  "version": "1.0.0",
+  "description": "Curso de Clean Architecture em Node.js do Rodrigo Manguinho",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "NathanMBR",
+  "license": "ISC"
+}
