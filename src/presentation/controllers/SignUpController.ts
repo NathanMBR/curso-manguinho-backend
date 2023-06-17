@@ -27,8 +27,8 @@ export class SignUpController {
       };
 
     return {
-      statusCode: 500,
-      body: new Error("Internal server error")
+      statusCode: 200,
+      body: "ok"
     };
   }
 }
