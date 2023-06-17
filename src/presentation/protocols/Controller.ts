@@ -1,10 +1,16 @@
-import { HttpRequest } from "./HttpRequest";
-import { HttpResponse } from "./HttpResponse";
-
 export namespace Controller {
-  export type Request = HttpRequest;
+  export interface Request {
+    body?: any;
+  }
+
+  export class Response {
+    constructor(
+      public readonly statusCode: number,
+      public readonly body: any
+    ) {}
+  }
 
   export interface Protocol {
-    handle: (httpRequest: Request) => HttpResponse;
+    handle: (httpRequest: Request) => Response;
   }
 }
