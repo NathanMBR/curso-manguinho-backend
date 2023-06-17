@@ -9,14 +9,20 @@ export class SignUpController {
   constructor() {}
 
   handle(httpRequest: HttpRequest): HttpResponse {
-    if (!httpRequest.body.name)
-      return HttpResponseHelper.badRequest(new MissingParamError("name"));
+    const requiredFields = [
+      "name",
+      "email",
+      "password"
+    ];
 
-    if (!httpRequest.body.email)
-      return HttpResponseHelper.badRequest(new MissingParamError("email"));
+    for (const requiredField of requiredFields) {
+      const fieldToCheck = httpRequest.body[requiredField];
 
-    if (!httpRequest.body.password)
-      return HttpResponseHelper.badRequest(new MissingParamError("password"));
+      if (!fieldToCheck)
+        return HttpResponseHelper.badRequest(
+          new MissingParamError(requiredField)
+        );
+    }
 
     return HttpResponseHelper.ok("ok");
   }
