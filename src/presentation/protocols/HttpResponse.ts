@@ -1,4 +1,6 @@
-export interface HttpResponse {
-  statusCode: number;
-  body: any;
+export class HttpResponse {
+  constructor(
+    public readonly statusCode: number,
+    public readonly body: any
+  ) {}
 }
