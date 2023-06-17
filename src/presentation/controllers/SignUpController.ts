@@ -2,6 +2,7 @@ import {
   HttpRequest,
   HttpResponse
 } from "../protocols";
+import { MissingParamError } from "../errors";
 
 export class SignUpController {
   constructor() {}
@@ -10,19 +11,19 @@ export class SignUpController {
     if (!httpRequest.body.name)
       return {
         statusCode: 400,
-        body: new Error("Missing parameter: name")
+        body: new MissingParamError("name")
       };
 
     if (!httpRequest.body.email)
       return {
         statusCode: 400,
-        body: new Error("Missing parameter: email")
+        body: new MissingParamError("email")
       };
 
     if (!httpRequest.body.password)
       return {
         statusCode: 400,
-        body: new Error("Missing parameter: password")
+        body: new MissingParamError("password")
       };
 
     return {
