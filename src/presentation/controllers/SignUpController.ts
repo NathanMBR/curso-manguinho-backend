@@ -4,7 +4,8 @@ import {
 } from "../protocols";
 import {
   MissingParamError,
-  InvalidParamError
+  InvalidParamError,
+  InternalServerError
 } from "../errors";
 import { HttpResponseHelper } from "../helpers";
 
@@ -14,27 +15,35 @@ export class SignUpController implements Controller.Protocol {
   ) {}
 
   handle(httpRequest: Controller.Request) {
-    const requiredFields = [
-      "name",
-      "email",
-      "password"
-    ];
+    try {
+      const requiredFields = [
+        "name",
+        "email",
+        "password"
+      ];
 
-    for (const requiredField of requiredFields) {
-      const fieldToCheck = httpRequest.body[requiredField];
+      for (const requiredField of requiredFields) {
+        const fieldToCheck = httpRequest.body[requiredField];
 
-      if (!fieldToCheck)
+        if (!fieldToCheck)
+          return HttpResponseHelper.badRequest(
+            new MissingParamError(requiredField)
+          );
+      }
+
+      const isEmailValid = this.emailValidator.isValid(httpRequest.body.email);
+      if (!isEmailValid)
         return HttpResponseHelper.badRequest(
-          new MissingParamError(requiredField)
+          new InvalidParamError("email")
         );
-    }
 
-    const isEmailValid = this.emailValidator.isValid(httpRequest.body.email);
-    if (!isEmailValid)
-      return HttpResponseHelper.badRequest(
-        new InvalidParamError("email")
+      return HttpResponseHelper.ok("ok");
+    } catch(error) {
+      console.error(error);
+      
+      return HttpResponseHelper.internalServerError(
+        new InternalServerError()
       );
-
-    return HttpResponseHelper.ok("ok");
+    }
   }
 }
