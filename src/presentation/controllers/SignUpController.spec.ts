@@ -7,7 +7,8 @@ import {
 
 import {
   MissingParamError,
-  InvalidParamError
+  InvalidParamError,
+  InternalServerError
 } from "../errors";
 import { EmailValidator } from "../protocols";
 
@@ -113,5 +114,44 @@ describe("SignUp Controller", () => {
     const httpResponse = SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
+  });
+
+  it("should correctly call the email validator", () => {
+    const { SUT, emailValidator } = getSUTEnvironment();
+    const httpRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+    const isValidSpy = jest.spyOn(emailValidator, "isValid");
+
+    SUT.handle(httpRequest);
+
+    // ensure validator receives the correct parameters
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+  });
+
+  it("should return 500 if unexpected error throws", () => {
+    class EmailValidatorStub implements EmailValidator.Protocol {
+      isValid(email: string): boolean {
+        throw new Error();
+      }
+    }
+
+    const emailValidator = new EmailValidatorStub();
+    const SUT = new SignUpController(emailValidator);
+    const httpRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+
+    const httpResponse = SUT.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new InternalServerError());
   });
 });
