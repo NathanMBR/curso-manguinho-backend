@@ -18,7 +18,7 @@ import { SignUpController } from "./SignUpController";
 interface GetSUTEnvironmentReturn {
   emailValidator: EmailValidator.Protocol;
 
-  addAccount: AddAccount.Contract;
+  addAccount: AddAccount.Protocol;
 
   SUT: SignUpController;
 }
@@ -31,7 +31,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     }
   }
 
-  class AddAccountSub implements AddAccount.Contract {
+  class AddAccountSub implements AddAccount.Protocol {
     add(_account: AddAccount.Request): AddAccount.Response {
       const fakeAccount = {
         id: "test_id",

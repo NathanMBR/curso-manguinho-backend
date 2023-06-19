@@ -13,7 +13,7 @@ import { AddAccount } from "../../domain/usecases";
 export class SignUpController implements Controller.Protocol {
   constructor(
     private readonly emailValidator: EmailValidator.Protocol,
-    private readonly addAccount: AddAccount.Contract
+    private readonly addAccount: AddAccount.Protocol
   ) {}
 
   handle(httpRequest: Controller.Request) {

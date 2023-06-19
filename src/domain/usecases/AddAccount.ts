@@ -9,7 +9,7 @@ export namespace AddAccount {
 
   export type Response = Account;
 
-  export interface Contract {
+  export interface Protocol {
     add(account: AddAccount.Request): AddAccount.Response;
   }
 }
