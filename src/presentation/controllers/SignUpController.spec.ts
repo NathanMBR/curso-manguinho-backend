@@ -144,7 +144,7 @@ describe("SignUp Controller", () => {
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  it("should return 500 if unexpected error throws", () => {
+  it("should return 500 if email validator throws an unexpected error ", () => {
     const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -156,7 +156,28 @@ describe("SignUp Controller", () => {
 
     jest.spyOn(emailValidator, "isValid").mockImplementationOnce(
       () => {
-        throw new Error("Generic Error");
+        throw new Error("Test Error");
+      }
+    );
+
+    const httpResponse = SUT.handle(httpRequest);
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new InternalServerError());
+  });
+
+  it("should return 500 if add account throws an unexpected error", () => {
+    const { SUT, addAccount } = getSUTEnvironment();
+    const httpRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+
+    jest.spyOn(addAccount, "add").mockImplementationOnce(
+      () => {
+        throw new Error("Test Error")
       }
     );
 
