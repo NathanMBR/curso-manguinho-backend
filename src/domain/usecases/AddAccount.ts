@@ -7,7 +7,7 @@ export namespace AddAccount {
     password: string;
   };
 
-  export type Response = Account;
+  export type Response = Promise<Account>;
 
   export interface Protocol {
     add(account: AddAccount.Request): AddAccount.Response;

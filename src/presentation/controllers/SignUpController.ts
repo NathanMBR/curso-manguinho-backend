@@ -16,7 +16,7 @@ export class SignUpController implements Controller.Protocol {
     private readonly addAccount: AddAccount.Protocol
   ) {}
 
-  handle(httpRequest: Controller.Request) {
+  async handle(httpRequest: Controller.Request) {
     try {
       const requiredFields = [
         "name",
@@ -41,15 +41,19 @@ export class SignUpController implements Controller.Protocol {
 
 
       const { name, email, password } = httpRequest.body;
-      const account = this.addAccount.add(
+      const rawAccount = await this.addAccount.add(
         {
           name,
           email,
           password
         }
-      ) as Partial<ReturnType<typeof this.addAccount.add>>;
+      );
 
-      delete account.password;
+      const account: Omit<typeof rawAccount, "password"> = {
+        id: rawAccount.id,
+        name: rawAccount.name,
+        email: rawAccount.email
+      };
 
       return HttpResponseHelper.ok(account);
     } catch(error) {

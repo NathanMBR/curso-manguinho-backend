@@ -32,7 +32,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   }
 
   class AddAccountSub implements AddAccount.Protocol {
-    add(_account: AddAccount.Request): AddAccount.Response {
+    async add(_account: AddAccount.Request): AddAccount.Response {
       const fakeAccount = {
         id: "test_id",
         name: "Test Name",
@@ -59,8 +59,10 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   };
 };
 
+const getTestError = (): Error => new Error("Test Error");
+
 describe("SignUp Controller", () => {
-  it("should successfully handle request", () => {
+  it("should successfully handle request", async () => {
     const { SUT } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -70,7 +72,7 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(200);
     expect(httpResponse.body).toEqual(
       {
@@ -81,7 +83,7 @@ describe("SignUp Controller", () => {
     );
   });
 
-  it("should return 400 if no name is provided", () => {
+  it("should return 400 if no name is provided", async () => {
     const { SUT } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -91,12 +93,12 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("name"));
   });
 
-  it("should return 400 if no email is provided", () => {
+  it("should return 400 if no email is provided", async () => {
     const { SUT } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -106,12 +108,12 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("email"));
   });
 
-  it("should return 400 if no password is provided", () => {
+  it("should return 400 if no password is provided", async () => {
     const { SUT } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -121,12 +123,12 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new MissingParamError("password"));
   });
 
-  it("should return 400 if email format is invalid", () => {
+  it("should return 400 if email format is invalid", async () => {
     const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -139,12 +141,12 @@ describe("SignUp Controller", () => {
     // Injects a return value to a function
     jest.spyOn(emailValidator, "isValid").mockReturnValueOnce(false);
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  it("should return 500 if email validator throws an unexpected error ", () => {
+  it("should return 500 if email validator throws an unexpected error ", async () => {
     const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -156,16 +158,16 @@ describe("SignUp Controller", () => {
 
     jest.spyOn(emailValidator, "isValid").mockImplementationOnce(
       () => {
-        throw new Error("Test Error");
+        throw getTestError();
       }
     );
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new InternalServerError());
   });
 
-  it("should return 500 if add account throws an unexpected error", () => {
+  it("should return 500 if add account throws an unexpected error", async () => {
     const { SUT, addAccount } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -176,12 +178,12 @@ describe("SignUp Controller", () => {
     };
 
     jest.spyOn(addAccount, "add").mockImplementationOnce(
-      () => {
-        throw new Error("Test Error")
-      }
+      () => new Promise(
+        (_resolve, reject) => reject(getTestError())
+      )
     );
 
-    const httpResponse = SUT.handle(httpRequest);
+    const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new InternalServerError());
   });
