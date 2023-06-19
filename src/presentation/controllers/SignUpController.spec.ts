@@ -134,14 +134,7 @@ describe("SignUp Controller", () => {
   });
 
   it("should return 500 if unexpected error throws", () => {
-    class EmailValidatorStub implements EmailValidator.Protocol {
-      isValid(email: string): boolean {
-        throw new Error();
-      }
-    }
-
-    const emailValidator = new EmailValidatorStub();
-    const SUT = new SignUpController(emailValidator);
+    const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
       body: {
         name: "Test Name",
@@ -149,6 +142,12 @@ describe("SignUp Controller", () => {
         password: "test1234"
       }
     };
+
+    jest.spyOn(emailValidator, "isValid").mockImplementationOnce(
+      () => {
+        throw new Error("Generic Error");
+      }
+    );
 
     const httpResponse = SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
