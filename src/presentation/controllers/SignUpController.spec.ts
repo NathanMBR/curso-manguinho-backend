@@ -11,11 +11,14 @@ import {
   InternalServerError
 } from "../errors";
 import { EmailValidator } from "../protocols";
+import { AddAccount } from "../../domain/usecases";
 
 import { SignUpController } from "./SignUpController";
 
 interface GetSUTEnvironmentReturn {
   emailValidator: EmailValidator.Protocol;
+
+  addAccount: AddAccount.Contract;
 
   SUT: SignUpController;
 }
@@ -23,16 +26,35 @@ interface GetSUTEnvironmentReturn {
 const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   // "stub mock": a mock that returns a fixed/constant value
   class EmailValidatorStub implements EmailValidator.Protocol {
-    isValid(email: string): boolean {
+    isValid(_email: string): boolean {
       return true;
     }
   }
 
-  const emailValidator = new EmailValidatorStub();
+  class AddAccountSub implements AddAccount.Contract {
+    add(_account: AddAccount.Request): AddAccount.Response {
+      const fakeAccount = {
+        id: "test_id",
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      };
 
-  const signUpController = new SignUpController(emailValidator);
+      return fakeAccount;
+    }
+  }
+
+  const emailValidator = new EmailValidatorStub();
+  const addAccount = new AddAccountSub();
+
+  const signUpController = new SignUpController(
+    emailValidator,
+    addAccount
+  );
+
   return {
     emailValidator,
+    addAccount,
     SUT: signUpController
   };
 };
@@ -50,7 +72,13 @@ describe("SignUp Controller", () => {
 
     const httpResponse = SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(200);
-    expect(httpResponse.body).toBe("ok");
+    expect(httpResponse.body).toEqual(
+      {
+        id: "test_id",
+        name: httpRequest.body.name,
+        email: httpRequest.body.email
+      }
+    );
   });
 
   it("should return 400 if no name is provided", () => {
@@ -116,23 +144,6 @@ describe("SignUp Controller", () => {
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
   });
 
-  it("should correctly call the email validator", () => {
-    const { SUT, emailValidator } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        email: "test@email.com",
-        password: "test1234"
-      }
-    };
-    const isValidSpy = jest.spyOn(emailValidator, "isValid");
-
-    SUT.handle(httpRequest);
-
-    // ensure validator receives the correct parameters
-    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
-  });
-
   it("should return 500 if unexpected error throws", () => {
     const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
@@ -152,5 +163,39 @@ describe("SignUp Controller", () => {
     const httpResponse = SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new InternalServerError());
+  });
+
+  it("should correctly call the email validator", () => {
+    const { SUT, emailValidator } = getSUTEnvironment();
+    const httpRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+    const isValidSpy = jest.spyOn(emailValidator, "isValid");
+
+    SUT.handle(httpRequest);
+
+    // ensure validator receives the correct parameters
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+  });
+
+  it("should correctly call the add account use case", () => {
+    const { SUT, addAccount } = getSUTEnvironment();
+    const httpRequest = {
+      body: {
+        name: "Test",
+        email: "test@email.com",
+        password: "test"
+      }
+    };
+
+    const addAccountSpy = jest.spyOn(addAccount, "add");
+
+    SUT.handle(httpRequest);
+
+    expect(addAccountSpy).toHaveBeenCalledWith(httpRequest.body)
   });
 });
