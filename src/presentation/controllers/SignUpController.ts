@@ -8,10 +8,12 @@ import {
   InternalServerError
 } from "../errors";
 import { HttpResponseHelper } from "../helpers";
+import { AddAccount } from "../../domain/usecases";
 
 export class SignUpController implements Controller.Protocol {
   constructor(
-    private readonly emailValidator: EmailValidator.Protocol
+    private readonly emailValidator: EmailValidator.Protocol,
+    private readonly addAccount: AddAccount.Contract
   ) {}
 
   handle(httpRequest: Controller.Request) {
@@ -37,9 +39,21 @@ export class SignUpController implements Controller.Protocol {
           new InvalidParamError("email")
         );
 
-      return HttpResponseHelper.ok("ok");
+
+      const { name, email, password } = httpRequest.body;
+      const account = this.addAccount.add(
+        {
+          name,
+          email,
+          password
+        }
+      ) as Partial<ReturnType<typeof this.addAccount.add>>;
+
+      delete account.password;
+
+      return HttpResponseHelper.ok(account);
     } catch(error) {
-      console.error(error);
+      // console.error(error);
       
       return HttpResponseHelper.internalServerError(
         new InternalServerError()
