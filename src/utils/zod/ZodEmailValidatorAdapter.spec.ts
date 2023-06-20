@@ -58,8 +58,9 @@ describe("ZodEmailValidator Adapter", () => {
     const { SUT } = getSUTEnvironment();
     const safeParseSpy = jest.spyOn(emailSchema, "safeParse");
 
-    SUT.isValid("test@email.com");
+    const email = "test@email.com";
+    SUT.isValid(email);
 
-    expect(safeParseSpy).toHaveBeenCalledWith("test@email.com")
+    expect(safeParseSpy).toHaveBeenCalledWith(email);
   });
 });
