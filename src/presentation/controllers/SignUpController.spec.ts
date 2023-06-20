@@ -202,7 +202,7 @@ describe("SignUp Controller", () => {
     expect(httpResponse.body).toEqual(new InternalServerError());
   });
 
-  it("should correctly call the email validator", () => {
+  it("should pass email to email validator call", () => {
     const { SUT, emailValidator } = getSUTEnvironment();
     const httpRequest = {
       body: {
@@ -219,7 +219,7 @@ describe("SignUp Controller", () => {
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
   });
 
-  it("should correctly call the add account use case", () => {
+  it("should pass body to add account call", () => {
     const { SUT, addAccount } = getSUTEnvironment();
     const httpRequest = {
       body: {
