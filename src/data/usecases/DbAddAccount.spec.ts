@@ -45,4 +45,23 @@ describe("DbAddAccount UseCase", () => {
 
     expect(encryptSpy).toHaveBeenCalledWith(accountData.password);
   });
+
+  it("should not have a 'try/catch' statement", async () => {
+    const { SUT, encrypter } = getSUTEnvironment();
+
+    jest.spyOn(encrypter, "encrypt").mockImplementation(
+      () => {
+        throw new Error();
+      }
+    );
+
+    const accountData = {
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    const SUTResponse = SUT.add(accountData);
+    await expect(SUTResponse).rejects.toThrow();
+  })
 });
