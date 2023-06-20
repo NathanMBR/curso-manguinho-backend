@@ -1,27 +1,29 @@
 import { AddAccount } from "../../domain/usecases";
-import { Encrypter } from "../protocols";
+import { AddAccountRepository, Encrypter } from "../protocols";
 
 export class DbAddAccount implements AddAccount.Protocol {
   constructor(
-    private readonly encrypter: Encrypter.Protocol
+    private readonly encrypter: Encrypter.Protocol,
+    private readonly addAccountRepository: AddAccountRepository.Protocol
   ) {}
 
-  async add(account: AddAccount.Request): AddAccount.Response {
+  async add(accountData: AddAccount.Request): AddAccount.Response {
     const {
       name,
       email,
       password
-    } = account;
+    } = accountData;
 
     const hashedPassword = await this.encrypter.encrypt(password);
 
-    return Promise.resolve(
+    const account = await this.addAccountRepository.add(
       {
-        id: "foo_id",
-        name: name,
-        email: email,
+        name,
+        email,
         password: hashedPassword
       }
     );
+
+    return account;
   }
 }
