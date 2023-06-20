@@ -54,6 +54,27 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
 }
 
 describe("DbAddAccount UseCase", () => {
+  it("should successfully add an account", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const accountData = {
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    const SUTResponse = await SUT.add(accountData);
+
+    expect(SUTResponse).toEqual(
+      {
+        id: "test_id",
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    );
+  });
+
   it("should pass password to encrypter call", async () => {
     const { SUT, encrypter } = getSUTEnvironment();
 
