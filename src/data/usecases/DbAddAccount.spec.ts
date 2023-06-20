@@ -94,13 +94,15 @@ describe("DbAddAccount UseCase", () => {
     );
   });
 
-  it("should not have a 'try/catch' statement", async () => {
+  it("should repass encrypter errors to upper level", async () => {
     const { SUT, encrypter } = getSUTEnvironment();
 
     jest.spyOn(encrypter, "encrypt").mockImplementation(
-      () => {
-        throw new Error();
-      }
+      () => new Promise(
+        (_resolve, reject) => reject(
+          new Error()
+        )
+      )
     );
 
     const accountData = {
@@ -111,5 +113,26 @@ describe("DbAddAccount UseCase", () => {
 
     const SUTResponse = SUT.add(accountData);
     await expect(SUTResponse).rejects.toThrow();
-  })
+  });
+
+  it("should repass add account repository errors to upper level", async () => {
+    const { SUT, addAccountRepository } = getSUTEnvironment();
+
+    jest.spyOn(addAccountRepository, "add").mockImplementation(
+      () => new Promise(
+        (_resolve, reject) => reject(
+          new Error()
+        )
+      )
+    );
+
+    const accountData = {
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    const SUTResponse = SUT.add(accountData);
+    await expect(SUTResponse).rejects.toThrow();
+  });
 });
