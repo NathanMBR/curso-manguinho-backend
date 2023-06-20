@@ -83,6 +83,20 @@ describe("SignUp Controller", () => {
     );
   });
 
+  it("should not return password in the response body", async () => {
+    const { SUT } = getSUTEnvironment();
+    const httpRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+
+    const httpResponse = await SUT.handle(httpRequest);
+    expect(httpResponse.body).not.toHaveProperty("password");
+  });
+
   it("should return 400 if no name is provided", async () => {
     const { SUT } = getSUTEnvironment();
     const httpRequest = {
