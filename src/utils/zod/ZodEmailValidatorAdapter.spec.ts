@@ -21,7 +21,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   };
 }
 
-describe("EmailValidator Adapter", () => {
+describe("ZodEmailValidator Adapter", () => {
   it("should return true when zod validator returns true", () => {
     const { SUT } = getSUTEnvironment();
 
