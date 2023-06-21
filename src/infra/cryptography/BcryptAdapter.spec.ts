@@ -26,7 +26,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
 };
 
 describe("Bcrypt Adapter", () => {
-  it("should correctly hash the value", async () => {
+  it("should successfully hash the value", async () => {
     const { SUT } = getSUTEnvironment();
 
     jest.spyOn(bcrypt, "hash").mockImplementationOnce(
@@ -37,7 +37,7 @@ describe("Bcrypt Adapter", () => {
     expect(SUTResponse).toBe("hashed_value");
   });
 
-  it("should correctly call the encrypt adapter", async () => {
+  it("should pass string to bcrypt hash", async () => {
     const { SUT, rounds } = getSUTEnvironment();
     const hashSpy = jest.spyOn(bcrypt, "hash");
     const password = "test1234";
@@ -45,5 +45,18 @@ describe("Bcrypt Adapter", () => {
     await SUT.encrypt(password);
 
     expect(hashSpy).toHaveBeenCalledWith(password, rounds);
+  });
+
+  it("should repass bcrypt errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    jest.spyOn(bcrypt, "hash").mockImplementationOnce(
+      async () => {
+        throw new Error();
+      }
+    );
+
+    const SUTResponse = SUT.encrypt("test1234");
+    await expect(SUTResponse).rejects.toThrow();
   });
 });
