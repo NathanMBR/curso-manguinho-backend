@@ -9,3 +9,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Account {
+  id String @id
+  name String @db.VarChar()
+  email String @db.VarChar()
+  password String @db.VarChar()
+}
