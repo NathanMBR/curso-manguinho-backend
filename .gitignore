@@ -2,3 +2,6 @@ node_modules/
 build/
 private/
 coverage/
+
+*.env*
+!.env.example
