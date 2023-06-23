@@ -2,7 +2,7 @@
   "name": "curso-manguinho-backend",
   "version": "1.0.0",
   "description": "Curso de Clean Architecture em Node.js do Rodrigo Manguinho",
-  "main": "index.js",
+  "main": "./build/main/server.js",
   "scripts": {
     "test": "jest --passWithNoTests --coverage",
     "test:unit": "jest --passWithNoTests --runInBand --testMatch **/*.spec.ts",
