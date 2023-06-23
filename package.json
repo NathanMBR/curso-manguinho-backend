@@ -4,6 +4,8 @@
   "description": "Curso de Clean Architecture em Node.js do Rodrigo Manguinho",
   "main": "./build/main/server.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node .",
     "test": "jest --passWithNoTests --coverage",
     "test:unit": "jest --passWithNoTests --runInBand --testMatch **/*.spec.ts",
     "test:integration": "jest --passWithNoTests --testMatch **/*.test.ts"
