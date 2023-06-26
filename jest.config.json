@@ -1,4 +1,9 @@
 {
+  "roots": ["<rootDir>/src"],
+  "collectCoverageFrom": [
+    "<rootDir>/src/**/*.ts",
+    "!<rootDir>/src/main/**/*.ts"
+  ],
   "transform": {
     "^.+\\.(t|j)sx?$": "@swc/jest"
   }
