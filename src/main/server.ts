@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import { createApp } from "./app";
 import { PORT } from "./config";
 import { prisma } from "../infra/db";
