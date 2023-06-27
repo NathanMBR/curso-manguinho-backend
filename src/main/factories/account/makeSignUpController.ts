@@ -1,9 +1,11 @@
-import { ZodEmailValidatorAdapter } from "../../../utils/zod";
-import { bcryptHashRounds } from "../../config";
-import { BcryptAdapter } from "../../../infra/cryptography";
-import { PrismaAccountRepository } from "../../../infra/db";
 import { DbAddAccount } from "../../../data/usecases";
 import { SignUpController } from "../../../presentation/controllers";
+import { BcryptAdapter } from "../../../infra/cryptography";
+import { PrismaAccountRepository } from "../../../infra/db";
+import { ZodEmailValidatorAdapter } from "../../../utils/zod";
+import { PinoLoggerAdapter } from "../../../utils/pino";
+import { bcryptHashRounds } from "../../config";
+import { ErrorHandlerControllerDecorator } from "../../decorators";
 
 export const makeSignUpController = () => {
   const emailValidator = new ZodEmailValidatorAdapter();
@@ -21,5 +23,12 @@ export const makeSignUpController = () => {
     dbAddAccount
   );
 
-  return signUpController;
+  const logger = new PinoLoggerAdapter();
+
+  const errorHandlerDecorator = new ErrorHandlerControllerDecorator(
+    signUpController,
+    logger,
+  );
+
+  return errorHandlerDecorator;
 };
