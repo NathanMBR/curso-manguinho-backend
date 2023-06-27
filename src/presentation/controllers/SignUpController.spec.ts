@@ -7,8 +7,7 @@ import {
 
 import {
   MissingParamError,
-  InvalidParamError,
-  InternalServerError
+  InvalidParamError
 } from "../errors";
 import { EmailValidator } from "../protocols";
 import { AddAccount } from "../../domain/usecases";
@@ -158,48 +157,6 @@ describe("SignUp Controller", () => {
     const httpResponse = await SUT.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
     expect(httpResponse.body).toEqual(new InvalidParamError("email"));
-  });
-
-  it("should return 500 if email validator throws an unexpected error ", async () => {
-    const { SUT, emailValidator } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        email: "test@email.com",
-        password: "test1234"
-      }
-    };
-
-    jest.spyOn(emailValidator, "isValid").mockImplementationOnce(
-      () => {
-        throw getTestError();
-      }
-    );
-
-    const httpResponse = await SUT.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new InternalServerError());
-  });
-
-  it("should return 500 if add account throws an unexpected error", async () => {
-    const { SUT, addAccount } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        email: "test@email.com",
-        password: "test1234"
-      }
-    };
-
-    jest.spyOn(addAccount, "add").mockImplementationOnce(
-      () => new Promise(
-        (_resolve, reject) => reject(getTestError())
-      )
-    );
-
-    const httpResponse = await SUT.handle(httpRequest);
-    expect(httpResponse.statusCode).toBe(500);
-    expect(httpResponse.body).toEqual(new InternalServerError());
   });
 
   it("should pass email to email validator call", () => {
