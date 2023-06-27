@@ -27,20 +27,20 @@ describe("PinoLogger Adapter", () => {
 
     jest.spyOn(pinoInstance, "error").mockImplementationOnce(mockedErrorLogger);
 
-    SUT.logError("Test Error Message");
+    SUT.logError({ test: "test"});
 
     expect(mockedErrorLogger).toHaveBeenCalledTimes(1);
   });
 
-  it("should pass string to pino error logger", () => {
+  it("should pass payload to pino error logger", () => {
     const { SUT } = getSUTEnvironment();
     const mockedErrorLogger = jest.fn();
 
     jest.spyOn(pinoInstance, "error").mockImplementationOnce(mockedErrorLogger);
 
-    const errorMessage = "Test Error Message";
-    SUT.logError(errorMessage);
+    const errorPayload = { test: "test" };
+    SUT.logError(errorPayload);
 
-    expect(mockedErrorLogger).toHaveBeenCalledWith(errorMessage);
+    expect(mockedErrorLogger).toHaveBeenCalledWith(errorPayload);
   });
 });
