@@ -4,8 +4,7 @@ import {
 } from "../protocols";
 import {
   MissingParamError,
-  InvalidParamError,
-  InternalServerError
+  InvalidParamError
 } from "../errors";
 import { HttpResponseHelper } from "../helpers";
 import { AddAccount } from "../../domain/usecases";
@@ -17,51 +16,43 @@ export class SignUpController implements Controller.Protocol {
   ) {}
 
   async handle(httpRequest: Controller.Request) {
-    try {
-      const requiredFields = [
-        "name",
-        "email",
-        "password"
-      ];
+    const requiredFields = [
+      "name",
+      "email",
+      "password"
+    ];
 
-      for (const requiredField of requiredFields) {
-        const fieldToCheck = httpRequest.body[requiredField];
+    for (const requiredField of requiredFields) {
+      const fieldToCheck = httpRequest.body[requiredField];
 
-        if (!fieldToCheck)
-          return HttpResponseHelper.badRequest(
-            new MissingParamError(requiredField)
-          );
-      }
-
-      const isEmailValid = this.emailValidator.isValid(httpRequest.body.email);
-      if (!isEmailValid)
+      if (!fieldToCheck)
         return HttpResponseHelper.badRequest(
-          new InvalidParamError("email")
+          new MissingParamError(requiredField)
         );
-
-
-      const { name, email, password } = httpRequest.body;
-      const rawAccount = await this.addAccount.add(
-        {
-          name,
-          email,
-          password
-        }
-      );
-
-      const account: Omit<typeof rawAccount, "password"> = {
-        id: rawAccount.id,
-        name: rawAccount.name,
-        email: rawAccount.email
-      };
-
-      return HttpResponseHelper.ok(account);
-    } catch(error) {
-      // console.error(error);
-      
-      return HttpResponseHelper.internalServerError(
-        new InternalServerError()
-      );
     }
+
+    const isEmailValid = this.emailValidator.isValid(httpRequest.body.email);
+    if (!isEmailValid)
+      return HttpResponseHelper.badRequest(
+        new InvalidParamError("email")
+      );
+
+
+    const { name, email, password } = httpRequest.body;
+    const rawAccount = await this.addAccount.add(
+      {
+        name,
+        email,
+        password
+      }
+    );
+
+    const account: Omit<typeof rawAccount, "password"> = {
+      id: rawAccount.id,
+      name: rawAccount.name,
+      email: rawAccount.email
+    };
+
+    return HttpResponseHelper.ok(account);
   }
 }
