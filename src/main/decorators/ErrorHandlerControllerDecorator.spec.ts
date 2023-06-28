@@ -6,7 +6,7 @@ import {
 } from "@jest/globals";
 
 import { Controller, Logger } from "../../presentation/protocols";
-import { InternalServerError } from "../../presentation/errors"
+import { InternalServerError } from "../../presentation/errors";
 import { ErrorHandlerControllerDecorator } from "./ErrorHandlerControllerDecorator";
 
 interface GetSUTEnvironmentReturn {
@@ -51,7 +51,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
 };
 
 describe("ErrorHandlerController Decorator", () => {
-  it("should successfully handler controller errors", async () => {
+  it("should successfully decorate controller", async () => {
     const { SUT } = getSUTEnvironment();
 
     const httpRequest = {
@@ -135,5 +135,37 @@ describe("ErrorHandlerController Decorator", () => {
     const SUTResponse = await SUT.handle(httpRequest);
 
     expect(controllerResponse).toEqual(SUTResponse);
+  });
+
+  it("should catch controller errors", async () => {
+    const {
+      controller,
+      logger,
+
+      SUT
+    } = getSUTEnvironment();
+
+    jest.spyOn(controller, "handle").mockImplementationOnce(
+      async () => {
+        throw new Error("Test Error")
+      }
+    );
+
+    const logErrorSpy = jest.spyOn(logger, "logError");
+
+    const httpRequest = {
+      body: {
+        test: "test"
+      }
+    };
+    const SUTResponse = await SUT.handle(httpRequest);
+
+    expect(SUTResponse).toEqual(
+      {
+        statusCode: 500,
+        body: new InternalServerError()
+      }
+    );
+    expect(logErrorSpy).toHaveBeenCalledTimes(1);
   });
 });
