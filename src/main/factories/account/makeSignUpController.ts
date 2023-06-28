@@ -1,4 +1,7 @@
-import { DbAddAccount } from "../../../data/usecases";
+import {
+  DbFindOneAccountByEmail,
+  DbAddAccount
+} from "../../../data/usecases";
 import { SignUpController } from "../../../presentation/controllers";
 import { BcryptAdapter } from "../../../infra/cryptography";
 import { PrismaAccountRepository } from "../../../infra/db";
@@ -13,6 +16,10 @@ export const makeSignUpController = () => {
   const encrypter = new BcryptAdapter(bcryptHashRounds);
   const accountRepository = new PrismaAccountRepository();
 
+  const dbFindOneAccountByEmail = new DbFindOneAccountByEmail(
+    accountRepository
+  );
+
   const dbAddAccount = new DbAddAccount(
     encrypter,
     accountRepository
@@ -20,6 +27,7 @@ export const makeSignUpController = () => {
 
   const signUpController = new SignUpController(
     emailValidator,
+    dbFindOneAccountByEmail,
     dbAddAccount
   );
 
