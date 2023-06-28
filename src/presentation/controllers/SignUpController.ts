@@ -4,18 +4,29 @@ import {
 } from "../protocols";
 import {
   MissingParamError,
-  InvalidParamError
+  InvalidParamError,
+  EmailAlreadyExistsError
 } from "../errors";
 import { HttpResponseHelper } from "../helpers";
-import { AddAccount } from "../../domain/usecases";
+import {
+  FindOneAccountByEmail,
+  AddAccount
+} from "../../domain/usecases";
 
 export class SignUpController implements Controller.Protocol {
   constructor(
     private readonly emailValidator: EmailValidator.Protocol,
+    private readonly findOneAccountByEmail: FindOneAccountByEmail.Protocol,
     private readonly addAccount: AddAccount.Protocol
   ) {}
 
   async handle(httpRequest: Controller.Request) {
+    const {
+      name,
+      email,
+      password
+    } = httpRequest.body;
+
     const requiredFields = [
       "name",
       "email",
@@ -31,14 +42,22 @@ export class SignUpController implements Controller.Protocol {
         );
     }
 
-    const isEmailValid = this.emailValidator.isValid(httpRequest.body.email);
+    const isEmailValid = this.emailValidator.isValid(email);
     if (!isEmailValid)
       return HttpResponseHelper.badRequest(
         new InvalidParamError("email")
       );
 
+    const doesEmailAlreadyExist = await this.findOneAccountByEmail.findOneByEmail(
+      {
+        email
+      }
+    );
+    if (doesEmailAlreadyExist)
+      return HttpResponseHelper.badRequest(
+        new EmailAlreadyExistsError()
+      );
 
-    const { name, email, password } = httpRequest.body;
     const rawAccount = await this.addAccount.add(
       {
         name,
