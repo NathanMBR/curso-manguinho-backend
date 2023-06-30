@@ -6,11 +6,9 @@ import {
 } from "@jest/globals";
 
 import {
-  MissingParamError,
-  InvalidParamError,
   EmailAlreadyExistsError
 } from "../errors";
-import { EmailValidator } from "../protocols";
+import { Validator } from "../protocols";
 import {
   FindOneAccountByEmail,
   AddAccount
@@ -19,7 +17,7 @@ import {
 import { SignUpController } from "./SignUpController";
 
 interface GetSUTEnvironmentReturn {
-  emailValidator: EmailValidator.Protocol;
+  validator: Validator.Protocol;
 
   findOneAccountByEmail: FindOneAccountByEmail.Protocol;
   addAccount: AddAccount.Protocol;
@@ -29,9 +27,12 @@ interface GetSUTEnvironmentReturn {
 
 const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   // "stub mock": a mock that returns a fixed/constant value
-  class EmailValidatorStub implements EmailValidator.Protocol {
-    isValid(_email: string): boolean {
-      return true;
+  class ValidatorStub implements Validator.Protocol {
+    validate(data: Validator.Request): Validator.Response {
+      return {
+        isValid: true,
+        errors: []
+      };
     }
   }
 
@@ -54,18 +55,18 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     }
   }
 
-  const emailValidator = new EmailValidatorStub();
+  const validator = new ValidatorStub();
   const findOneAccountByEmail = new FindOneAccountByEmailStub();
   const addAccount = new AddAccountSub();
 
   const signUpController = new SignUpController(
-    emailValidator,
+    validator,
     findOneAccountByEmail,
     addAccount
   );
 
   return {
-    emailValidator,
+    validator,
     findOneAccountByEmail,
     addAccount,
     SUT: signUpController
@@ -108,69 +109,6 @@ describe("SignUp Controller", () => {
     expect(SUTResponse.body).not.toHaveProperty("password");
   });
 
-  it("should return 400 if no name is provided", async () => {
-    const { SUT } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        // name: "Test Name",
-        email: "test@email.com",
-        password: "test1234"
-      }
-    };
-
-    const SUTResponse = await SUT.handle(httpRequest);
-    expect(SUTResponse.statusCode).toBe(400);
-    expect(SUTResponse.body).toEqual(new MissingParamError("name"));
-  });
-
-  it("should return 400 if no email is provided", async () => {
-    const { SUT } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        // email: "test@email.com",
-        password: "test1234"
-      }
-    };
-
-    const SUTResponse = await SUT.handle(httpRequest);
-    expect(SUTResponse.statusCode).toBe(400);
-    expect(SUTResponse.body).toEqual(new MissingParamError("email"));
-  });
-
-  it("should return 400 if no password is provided", async () => {
-    const { SUT } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        email: "test@email.com",
-        // password: "test1234"
-      }
-    };
-
-    const SUTResponse = await SUT.handle(httpRequest);
-    expect(SUTResponse.statusCode).toBe(400);
-    expect(SUTResponse.body).toEqual(new MissingParamError("password"));
-  });
-
-  it("should return 400 if email format is invalid", async () => {
-    const { SUT, emailValidator } = getSUTEnvironment();
-    const httpRequest = {
-      body: {
-        name: "Test Name",
-        email: "invalid-email",
-        password: "test1234"
-      }
-    };
-
-    // Injects a return value to a function
-    jest.spyOn(emailValidator, "isValid").mockReturnValueOnce(false);
-
-    const SUTResponse = await SUT.handle(httpRequest);
-    expect(SUTResponse.statusCode).toBe(400);
-    expect(SUTResponse.body).toEqual(new InvalidParamError("email"));
-  });
-
   it("should return 400 if email already exists", async () => {
     const { SUT, findOneAccountByEmail } = getSUTEnvironment();
     
@@ -197,8 +135,8 @@ describe("SignUp Controller", () => {
     expect(SUTResponse.body).toEqual(new EmailAlreadyExistsError());
   });
 
-  it("should pass email to email validator call", async () => {
-    const { SUT, emailValidator } = getSUTEnvironment();
+  it("should pass body to sign up validator call", async () => {
+    const { SUT, validator } = getSUTEnvironment();
     const httpRequest = {
       body: {
         name: "Test Name",
@@ -206,12 +144,12 @@ describe("SignUp Controller", () => {
         password: "test1234"
       }
     };
-    const isValidSpy = jest.spyOn(emailValidator, "isValid");
+    const isValidSpy = jest.spyOn(validator, "validate");
 
     await SUT.handle(httpRequest);
 
     // ensure validator receives the correct parameters
-    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 
   it("should pass email to find one account by email call", async () => {
