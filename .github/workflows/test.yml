@@ -1,0 +1,48 @@
+name: Code quality assurance workflow
+on:
+  push:
+    branches:
+      - master
+      - development
+  pull_request:
+    branches:
+      - master
+      - development
+jobs:
+  publish:
+    name: Testing
+    runs-on: ubuntu-latest
+    container: node:18.16.1-alpine3.18
+    services:
+      database:
+        image: postgres:15.3-alpine3.18
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - name: Install node packages
+        run: pnpm install
+
+      - name: Inject Prisma types
+        run: pnpm exec prisma generate
+
+      - name: Run Prisma migrations
+
+      - name: Test application
+        run: pnpm run test:ci
+
+        env:
+          DATABASE_URL: postgresql://admin:admin@database:5432/test?schema=public
+          PRISMA_HIDE_UPDATE_MESSAGE: true
+          FASTIFY_LOGGER: false
+          PORT: 3000
