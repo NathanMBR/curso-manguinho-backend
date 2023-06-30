@@ -6,15 +6,27 @@ export const fastifyRouteAdapter = (controller: Controller.Protocol) => {
   const fastifyRoute = async (
     request: FastifyRequest,
     response: FastifyReply
-  ) => {
+  ): Promise<FastifyReply> => {
     const httpRequest: Controller.Request = {
       body: request.body
     };
 
-    const controllerResponse = await controller.handle(httpRequest);
+    const { statusCode, body } = await controller.handle(httpRequest);
+
+    const isBodyAnError = body instanceof Error;
+    if (isBodyAnError)
+      return response
+        .status(statusCode)
+        .send(
+          {
+            error: body.name,
+            message: body.message
+          }
+        );
+
     return response
-      .status(controllerResponse.statusCode)
-      .send(controllerResponse.body);
+      .status(statusCode)
+      .send(body);
   };
 
   return fastifyRoute;
