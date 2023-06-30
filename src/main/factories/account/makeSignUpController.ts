@@ -5,13 +5,13 @@ import {
 import { SignUpController } from "../../../presentation/controllers";
 import { BcryptAdapter } from "../../../infra/cryptography";
 import { PrismaAccountRepository } from "../../../infra/db";
-import { ZodEmailValidatorAdapter } from "../../../utils/zod";
+import { ZodSignUpValidator } from "../../../utils/zod";
 import { PinoLoggerAdapter } from "../../../utils/pino";
 import { bcryptHashRounds } from "../../config";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
 
 export const makeSignUpController = () => {
-  const emailValidator = new ZodEmailValidatorAdapter();
+  const validator = new ZodSignUpValidator();
 
   const encrypter = new BcryptAdapter(bcryptHashRounds);
   const accountRepository = new PrismaAccountRepository();
@@ -26,7 +26,7 @@ export const makeSignUpController = () => {
   );
 
   const signUpController = new SignUpController(
-    emailValidator,
+    validator,
     dbFindOneAccountByEmail,
     dbAddAccount
   );
