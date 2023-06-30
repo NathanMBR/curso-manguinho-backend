@@ -1,21 +1,20 @@
 import {
   Controller,
-  EmailValidator
+  Validator
 } from "../protocols";
-import {
-  MissingParamError,
-  InvalidParamError,
-  EmailAlreadyExistsError
-} from "../errors";
-import { HttpResponseHelper } from "../helpers";
 import {
   FindOneAccountByEmail,
   AddAccount
 } from "../../domain/usecases";
+import { HttpResponseHelper } from "../helpers";
+import {
+  ValidationError,
+  EmailAlreadyExistsError
+} from "../errors";
 
 export class SignUpController implements Controller.Protocol {
   constructor(
-    private readonly emailValidator: EmailValidator.Protocol,
+    private readonly signUpValidator: Validator.Protocol,
     private readonly findOneAccountByEmail: FindOneAccountByEmail.Protocol,
     private readonly addAccount: AddAccount.Protocol
   ) {}
@@ -27,25 +26,10 @@ export class SignUpController implements Controller.Protocol {
       password
     } = httpRequest.body;
 
-    const requiredFields = [
-      "name",
-      "email",
-      "password"
-    ];
-
-    for (const requiredField of requiredFields) {
-      const fieldToCheck = httpRequest.body[requiredField];
-
-      if (!fieldToCheck)
-        return HttpResponseHelper.badRequest(
-          new MissingParamError(requiredField)
-        );
-    }
-
-    const isEmailValid = this.emailValidator.isValid(email);
-    if (!isEmailValid)
+    const requestValidation = this.signUpValidator.validate(httpRequest.body);
+    if (!requestValidation.isValid)
       return HttpResponseHelper.badRequest(
-        new InvalidParamError("email")
+        new ValidationError(requestValidation.errors[0])
       );
 
     const doesEmailAlreadyExist = await this.findOneAccountByEmail.findOneByEmail(
