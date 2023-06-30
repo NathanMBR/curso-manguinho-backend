@@ -1,4 +1,4 @@
-name: Code quality assurance workflow
+name: Test workflow
 on:
   push:
     branches:
@@ -42,8 +42,8 @@ jobs:
       - name: Test application
         run: npm run test:ci
 
-        env:
-          DATABASE_URL: postgresql://admin:admin@database:5432/test?schema=public
-          PRISMA_HIDE_UPDATE_MESSAGE: true
-          FASTIFY_LOGGER: false
-          PORT: 3000
+    env:
+      DATABASE_URL: postgresql://admin:admin@database:5432/test?schema=public
+      PRISMA_HIDE_UPDATE_MESSAGE: true
+      FASTIFY_LOGGER: false
+      PORT: 3000
