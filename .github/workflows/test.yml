@@ -30,22 +30,17 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v3
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 6.0.2
-
       - name: Install node packages
-        run: pnpm install
+        run: npm install
 
       - name: Inject Prisma types
-        run: pnpm exec -r prisma generate
+        run: npm exec prisma generate
 
       - name: Run Prisma migrations
-        run: pnpm exec -r prisma migrate deploy
+        run: npm exec prisma migrate deploy
 
       - name: Test application
-        run: pnpm run test:ci
+        run: npm run test:ci
 
         env:
           DATABASE_URL: postgresql://admin:admin@database:5432/test?schema=public
