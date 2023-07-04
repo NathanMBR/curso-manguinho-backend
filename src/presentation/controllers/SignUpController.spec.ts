@@ -6,6 +6,7 @@ import {
 } from "@jest/globals";
 
 import {
+  ValidationError,
   EmailAlreadyExistsError
 } from "../errors";
 import { Validator } from "../protocols";
@@ -76,7 +77,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
 describe("SignUp Controller", () => {
   it("should successfully handle request", async () => {
     const { SUT } = getSUTEnvironment();
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test Name",
         email: "test@email.com",
@@ -84,20 +85,20 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const SUTResponse = await SUT.handle(httpRequest);
+    const SUTResponse = await SUT.handle(SUTRequest);
     expect(SUTResponse.statusCode).toBe(200);
     expect(SUTResponse.body).toEqual(
       {
         id: "test_id",
-        name: httpRequest.body.name,
-        email: httpRequest.body.email
+        name: SUTRequest.body.name,
+        email: SUTRequest.body.email
       }
     );
   });
 
   it("should not return password in the response body", async () => {
     const { SUT } = getSUTEnvironment();
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test Name",
         email: "test@email.com",
@@ -105,8 +106,32 @@ describe("SignUp Controller", () => {
       }
     };
 
-    const SUTResponse = await SUT.handle(httpRequest);
+    const SUTResponse = await SUT.handle(SUTRequest);
     expect(SUTResponse.body).not.toHaveProperty("password");
+  });
+
+  it("should return 400 if body is invalid", async () => {
+    const { SUT, validator } = getSUTEnvironment();
+    const SUTRequest = {
+      body: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
+    };
+
+    jest.spyOn(validator, "validate").mockReturnValueOnce(
+      {
+        isValid: false,
+        errors: [
+          "Test error"
+        ]
+      }
+    );
+
+    const SUTResponse = await SUT.handle(SUTRequest);
+    expect(SUTResponse.statusCode).toBe(400);
+    expect(SUTResponse.body).toEqual(new ValidationError("Test error"));
   });
 
   it("should return 400 if email already exists", async () => {
@@ -123,21 +148,21 @@ describe("SignUp Controller", () => {
       )
     );
 
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test Name",
         email: "test@email.com",
         password: "test1234"
       }
     };
-    const SUTResponse = await SUT.handle(httpRequest);
+    const SUTResponse = await SUT.handle(SUTRequest);
     expect(SUTResponse.statusCode).toBe(400);
     expect(SUTResponse.body).toEqual(new EmailAlreadyExistsError());
   });
 
   it("should pass body to sign up validator call", async () => {
     const { SUT, validator } = getSUTEnvironment();
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test Name",
         email: "test@email.com",
@@ -146,35 +171,35 @@ describe("SignUp Controller", () => {
     };
     const isValidSpy = jest.spyOn(validator, "validate");
 
-    await SUT.handle(httpRequest);
+    await SUT.handle(SUTRequest);
 
     // ensure validator receives the correct parameters
-    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body);
+    expect(isValidSpy).toHaveBeenCalledWith(SUTRequest.body);
   });
 
   it("should pass email to find one account by email call", async () => {
     const { SUT, findOneAccountByEmail } = getSUTEnvironment();
     const findOneByEmailSpy = jest.spyOn(findOneAccountByEmail, "findOneByEmail");
 
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test",
         email: "test@email.com",
         password: "test"
       }
     };
-    await SUT.handle(httpRequest);
+    await SUT.handle(SUTRequest);
 
     expect(findOneByEmailSpy).toHaveBeenCalledWith(
       {
-        email: httpRequest.body.email
+        email: SUTRequest.body.email
       }
     );
   });
 
   it("should pass body to add account call", async () => {
     const { SUT, addAccount } = getSUTEnvironment();
-    const httpRequest = {
+    const SUTRequest = {
       body: {
         name: "Test",
         email: "test@email.com",
@@ -184,8 +209,8 @@ describe("SignUp Controller", () => {
 
     const addSpy = jest.spyOn(addAccount, "add");
 
-    await SUT.handle(httpRequest);
+    await SUT.handle(SUTRequest);
 
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith(SUTRequest.body)
   });
 });
