@@ -1,5 +1,5 @@
-import { Logger } from "../../presentation/protocols";
-import { pinoInstance } from "./pinoInstance";
+import { Logger } from "../../../data/protocols";
+import { pinoInstance } from "./core";
 
 export class PinoLoggerAdapter implements Logger.Protocol {
   logError(payload: Logger.Request) {

@@ -1,2 +1,3 @@
-export * from "./pinoInstance";
+export * from "./core";
+
 export * from "./PinoLoggerAdapter";
