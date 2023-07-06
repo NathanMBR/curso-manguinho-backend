@@ -1,9 +1,11 @@
-import { FindOneAccountByEmail } from "../../domain/usecases";
+import { RepositoryAccount } from "../models";
 
 export namespace FindOneAccountByEmailRepository {
-  export type Request = FindOneAccountByEmail.Request;
+  export type Request = {
+    email: string;
+  };
 
-  export type Response = FindOneAccountByEmail.Response;
+  export type Response = Promise<RepositoryAccount | null>;
 
   export interface Protocol {
     findOneByEmail(account: FindOneAccountByEmailRepository.Request): FindOneAccountByEmailRepository.Response;
