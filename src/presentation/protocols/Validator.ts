@@ -2,8 +2,10 @@ export namespace Validator {
   export type Request = unknown;
 
   export type Response = {
-    isValid: boolean;
-    errors: Array<string>;
+    isValid: false;
+    error: Error;
+  } | {
+    isValid: true;
   };
 
   export interface Protocol {
