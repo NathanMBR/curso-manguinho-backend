@@ -1,5 +1,4 @@
 import { Validator } from "../../presentation/protocols";
-import { ValidationError } from "../../presentation/errors";
 import { SignUpValidator } from "../protocols";
 
 export class SignUpValidatorAdapter implements Validator.Protocol {
@@ -13,7 +12,7 @@ export class SignUpValidatorAdapter implements Validator.Protocol {
     if (!signUpValidation.isValid)
       return {
         isValid: false,
-        error: new ValidationError(signUpValidation.errors[0])
+        errorMessage: signUpValidation.errors[0]
       } as const;
 
     return {

@@ -42,7 +42,7 @@ type SUTSuccessfulResponse = {
 
 type SUTFailureResponse = {
   isValid: false;
-  error: Error;
+  errorMessage: string;
 };
 
 describe("SignUpValidator Adapter", () => {
@@ -69,7 +69,7 @@ describe("SignUpValidator Adapter", () => {
     const SUTResponse = SUT.validate(SUTRequest) as SUTFailureResponse;
 
     expect(SUTResponse.isValid).toBe(false);
-    expect(SUTResponse.error).toEqual(new ValidationError("Test error"));
+    expect(SUTResponse.errorMessage).toEqual("Test error");
   });
 
   it("should pass data to sign up validator call", () => {
