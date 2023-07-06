@@ -4,10 +4,7 @@ import {
   expect,
   jest
 } from "@jest/globals";
-import {
-  ZodError,
-  ZodIssue
-} from "zod";
+import { ZodError } from "zod";
 
 import { zodSignUpSchema } from "./schemas";
 import { ZodSignUpValidator } from "./ZodSignUpValidator";

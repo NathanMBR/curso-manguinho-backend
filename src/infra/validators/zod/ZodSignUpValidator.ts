@@ -1,8 +1,8 @@
-import { Validator } from "../../presentation/protocols";
+import { SignUpValidator } from "../../../validation/protocols";
 import { zodSignUpSchema } from "./schemas"
 import { zodValidationAdapter } from "./adapters";
 
-export class ZodSignUpValidator implements Validator.Protocol {
+export class ZodSignUpValidator implements SignUpValidator.Protocol {
   validate(data: unknown) {
     const zodValidation = zodSignUpSchema.safeParse(data);
 

@@ -1,11 +1,11 @@
 import { SafeParseReturnType } from "zod";
 
-import { Validator } from "../../../presentation/protocols";
+import { ValidationResponse } from "../../../../validation/models";
 
-export const zodValidationAdapter = <T, K>(zodValidationResponse: SafeParseReturnType<T, K>): Validator.Response => {
+export const zodValidationAdapter = <T, K>(zodValidationResponse: SafeParseReturnType<T, K>): ValidationResponse => {
   const { success } = zodValidationResponse;
 
-  const adaptedResponse: Validator.Response = {
+  const adaptedResponse: ValidationResponse = {
     isValid: success,
     errors: []
   };
