@@ -3,7 +3,7 @@ export namespace Validator {
 
   export type Response = {
     isValid: false;
-    error: Error;
+    errorMessage: string;
   } | {
     isValid: true;
   };
