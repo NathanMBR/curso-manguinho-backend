@@ -31,8 +31,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   class ValidatorStub implements Validator.Protocol {
     validate(data: Validator.Request): Validator.Response {
       return {
-        isValid: true,
-        errors: []
+        isValid: true
       };
     }
   }
@@ -123,9 +122,7 @@ describe("SignUp Controller", () => {
     jest.spyOn(validator, "validate").mockReturnValueOnce(
       {
         isValid: false,
-        errors: [
-          "Test error"
-        ]
+        error: new ValidationError("Test error")
       }
     );
 

@@ -7,10 +7,7 @@ import {
   AddAccount
 } from "../../domain/usecases";
 import { HttpResponseHelper } from "../helpers";
-import {
-  ValidationError,
-  EmailAlreadyExistsError
-} from "../errors";
+import { EmailAlreadyExistsError } from "../errors";
 
 export class SignUpController implements Controller.Protocol {
   constructor(
@@ -29,7 +26,7 @@ export class SignUpController implements Controller.Protocol {
     const requestValidation = this.signUpValidator.validate(httpRequest.body);
     if (!requestValidation.isValid)
       return HttpResponseHelper.badRequest(
-        new ValidationError(requestValidation.errors[0])
+        requestValidation.error
       );
 
     const doesEmailAlreadyExist = await this.findOneAccountByEmail.findOneByEmail(
