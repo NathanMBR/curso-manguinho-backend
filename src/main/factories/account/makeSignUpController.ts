@@ -2,16 +2,20 @@ import {
   DbFindOneAccountByEmail,
   DbAddAccount
 } from "../../../data/usecases";
+import { SignUpValidatorAdapter } from "../../../validation/adapters";
 import { SignUpController } from "../../../presentation/controllers";
 import { BcryptAdapter } from "../../../infra/cryptography";
 import { PrismaAccountRepository } from "../../../infra/db";
-import { ZodSignUpValidator } from "../../../utils/zod";
+import { ZodSignUpValidator } from "../../../infra/validators";
 import { PinoLoggerAdapter } from "../../../infra/log";
 import { bcryptHashRounds } from "../../config";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
 
 export const makeSignUpController = () => {
   const validator = new ZodSignUpValidator();
+  const validatorAdapter = new SignUpValidatorAdapter(
+    validator
+  );
 
   const encrypter = new BcryptAdapter(bcryptHashRounds);
   const accountRepository = new PrismaAccountRepository();
@@ -26,7 +30,7 @@ export const makeSignUpController = () => {
   );
 
   const signUpController = new SignUpController(
-    validator,
+    validatorAdapter,
     dbFindOneAccountByEmail,
     dbAddAccount
   );
@@ -35,7 +39,7 @@ export const makeSignUpController = () => {
 
   const errorHandlerDecorator = new ErrorHandlerControllerDecorator(
     signUpController,
-    logger,
+    logger
   );
 
   return errorHandlerDecorator;
