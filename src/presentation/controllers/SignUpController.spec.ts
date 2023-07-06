@@ -29,7 +29,7 @@ interface GetSUTEnvironmentReturn {
 const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   // "stub mock": a mock that returns a fixed/constant value
   class ValidatorStub implements Validator.Protocol {
-    validate(data: Validator.Request): Validator.Response {
+    validate(_data: Validator.Request): Validator.Response {
       return {
         isValid: true
       };
@@ -37,7 +37,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   }
 
   class FindOneAccountByEmailStub implements FindOneAccountByEmail.Protocol {
-    async findOneByEmail(account: FindOneAccountByEmail.Request): FindOneAccountByEmail.Response {
+    async findOneByEmail(_account: FindOneAccountByEmail.Request): FindOneAccountByEmail.Response {
       return Promise.resolve(null);
     }
   }
@@ -122,7 +122,7 @@ describe("SignUp Controller", () => {
     jest.spyOn(validator, "validate").mockReturnValueOnce(
       {
         isValid: false,
-        error: new ValidationError("Test error")
+        errorMessage: "Test error"
       }
     );
 
