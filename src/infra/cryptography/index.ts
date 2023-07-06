@@ -1,1 +1,1 @@
-export * from "./BcryptAdapter";
+export * from "./bcrypt";

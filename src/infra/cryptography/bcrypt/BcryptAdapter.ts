@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import { Encrypter } from "../../data/protocols";
+import { Encrypter } from "../../../data/protocols";
 
 export class BcryptAdapter implements Encrypter.Protocol {
   constructor(
