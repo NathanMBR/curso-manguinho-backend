@@ -6,7 +6,7 @@ import { SignUpController } from "../../../presentation/controllers";
 import { BcryptAdapter } from "../../../infra/cryptography";
 import { PrismaAccountRepository } from "../../../infra/db";
 import { ZodSignUpValidator } from "../../../utils/zod";
-import { PinoLoggerAdapter } from "../../../utils/pino";
+import { PinoLoggerAdapter } from "../../../infra/log";
 import { bcryptHashRounds } from "../../config";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
 

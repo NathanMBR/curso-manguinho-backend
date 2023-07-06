@@ -1,9 +1,7 @@
-import {
-  Controller,
-  Logger
-} from "../../presentation/protocols";
+import { Controller } from "../../presentation/protocols";
 import { InternalServerError } from "../../presentation/errors";
 import { HttpResponseHelper } from "../../presentation/helpers";
+import { Logger } from "../../data/protocols";
 
 export class ErrorHandlerControllerDecorator implements Controller.Protocol {
   constructor(

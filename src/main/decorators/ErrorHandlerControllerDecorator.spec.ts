@@ -5,8 +5,9 @@ import {
   jest
 } from "@jest/globals";
 
-import { Controller, Logger } from "../../presentation/protocols";
+import { Controller } from "../../presentation/protocols";
 import { InternalServerError } from "../../presentation/errors";
+import { Logger } from "../../data/protocols";
 import { ErrorHandlerControllerDecorator } from "./ErrorHandlerControllerDecorator";
 
 interface GetSUTEnvironmentReturn {

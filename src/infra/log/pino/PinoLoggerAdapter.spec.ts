@@ -5,8 +5,8 @@ import {
   jest
 } from "@jest/globals";
 
+import { pinoInstance } from "./core";
 import { PinoLoggerAdapter } from "./PinoLoggerAdapter";
-import { pinoInstance } from "./pinoInstance";
 
 interface GetSUTEnvironmentResponse {
   SUT: PinoLoggerAdapter
