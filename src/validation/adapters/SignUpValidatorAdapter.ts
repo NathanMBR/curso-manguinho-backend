@@ -1,5 +1,6 @@
 import { Validator } from "../../presentation/protocols";
 import { SignUpValidator } from "../protocols";
+import { adaptValidatorResponse } from "../helpers";
 
 export class SignUpValidatorAdapter implements Validator.Protocol {
   constructor(
@@ -9,14 +10,6 @@ export class SignUpValidatorAdapter implements Validator.Protocol {
   validate(data: unknown): Validator.Response {
     const signUpValidation = this.signUpValidator.validate(data);
 
-    if (!signUpValidation.isValid)
-      return {
-        isValid: false,
-        errorMessage: signUpValidation.errors[0]
-      } as const;
-
-    return {
-      isValid: true
-    } as const;
+    return adaptValidatorResponse(signUpValidation);
   };
 }
