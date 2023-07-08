@@ -7,7 +7,6 @@ import {
 
 import { DbFindOneAccountByEmail } from "./DbFindOneAccountByEmail";
 import { FindOneAccountByEmailRepository } from "../protocols";
-import { FindOneAccountByEmail } from "../../domain/usecases";
 
 interface GetSUTEnvironmentResponse {
   findOneAccountByEmailRepository: FindOneAccountByEmailRepository.Protocol;
@@ -17,7 +16,7 @@ interface GetSUTEnvironmentResponse {
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class FindOneAccountByEmailRepositoryStub implements FindOneAccountByEmailRepository.Protocol {
-    findOneByEmail(_search: FindOneAccountByEmail.Request): FindOneAccountByEmail.Response {
+    findOneByEmail(_search: FindOneAccountByEmailRepository.Request): FindOneAccountByEmailRepository.Response {
       const account = {
         id: "test_id",
         name: "Test Name",
