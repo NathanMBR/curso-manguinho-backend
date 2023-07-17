@@ -5,7 +5,8 @@ import {
 } from "@jest/globals";
 import {
   SafeParseSuccess,
-  SafeParseError
+  SafeParseError,
+  ZodIssue
 } from "zod";
 
 import { zodSignUpSchema } from "./zodSignUpSchema";
@@ -48,8 +49,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account name is required");
+    expect(issue.message).toBe("The account name is required");
     
   });
 
@@ -63,8 +66,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account name must be a string");
+    expect(issue.message).toBe("The account name must be a string");
   });
 
   it("should return an error if name isn't at least 3 characters long", () => {
@@ -77,8 +82,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account name must have at least 3 characters");
+    expect(issue.message).toBe("The account name must have at least 3 characters");
   });
 
   it("should return an error if email isn't defined", () => {
@@ -91,8 +98,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account email is required");
+    expect(issue.message).toBe("The account email is required");
   });
 
   it("should return an error if email isn't a string", () => {
@@ -105,8 +114,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account email must be a string");
+    expect(issue.message).toBe("The account email must be a string");
   });
 
   it("should return an error if email isn't at most 255 characters long", () => {
@@ -119,8 +130,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account email must have at most 255 characters");
+    expect(issue.message).toBe("The account email must have at most 255 characters");
   });
 
   it("should return an error if password isn't defined", () => {
@@ -133,8 +146,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account password is required");
+    expect(issue.message).toBe("The account password is required");
   });
 
   it("should return an error if password isn't a string", () => {
@@ -147,8 +162,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
   
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account password must be a string");
+    expect(issue.message).toBe("The account password must be a string");
   });
 
   it("should return an error if password isn't at least 8 characters long", () => {
@@ -161,8 +178,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
   
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account password must have at least 8 characters");
+    expect(issue.message).toBe("The account password must have at least 8 characters");
   });
 
   it("should return an error if payload isn't defined", () => {
@@ -171,8 +190,10 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account payload is required");
+    expect(issue.message).toBe("The account payload is required");
   });
 
   it("should return an error if payload isn't an object", () => {
@@ -181,7 +202,9 @@ describe("ZodSignUpSchema Test", () => {
     type SUTError = SafeParseError<typeof SUTRequest>;
 
     const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
     expect(SUTResponse.success).toBe(false);
-    expect(SUTResponse.error.issues[0].message).toBe("The account payload must be an object");
+    expect(issue.message).toBe("The account payload must be an object");
   });
 });
