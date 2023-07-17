@@ -1,4 +1,4 @@
-import { RepositoryAccount } from "../models";
+import { RepositoryAccount } from "../../../models";
 
 export namespace FindOneAccountByEmailRepository {
   export type Request = {

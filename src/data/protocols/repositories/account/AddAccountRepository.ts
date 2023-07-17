@@ -1,4 +1,4 @@
-import { RepositoryAccount } from "../models";
+import { RepositoryAccount } from "../../../models";
 
 export namespace AddAccountRepository {
   export type Request = {
