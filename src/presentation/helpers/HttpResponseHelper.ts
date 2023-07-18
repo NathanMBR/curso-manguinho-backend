@@ -5,6 +5,10 @@ export abstract class HttpResponseHelper {
     return new Controller.HttpResponse(200, body);
   }
 
+  public static created(body: any): Controller.HttpResponse {
+    return new Controller.HttpResponse(201, body);
+  }
+
   public static badRequest(error: Error): Controller.HttpResponse {
     return new Controller.HttpResponse(400, error);
   }
