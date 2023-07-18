@@ -20,23 +20,25 @@ export class SignUpController implements Controller.Protocol {
   ) {}
 
   async handle(httpRequest: Controller.Request) {
+    const requestValidation = this.signUpValidator.validate(httpRequest.body);
+
+    if (!requestValidation.isValid)
+      return HttpResponseHelper.badRequest(
+        new ValidationError(requestValidation.errorMessage)
+      );
+
     const {
       name,
       email,
       password
     } = httpRequest.body;
 
-    const requestValidation = this.signUpValidator.validate(httpRequest.body);
-    if (!requestValidation.isValid)
-      return HttpResponseHelper.badRequest(
-        new ValidationError(requestValidation.errorMessage)
-      );
-
     const doesEmailAlreadyExist = await this.findOneAccountByEmail.findOneByEmail(
       {
         email
       }
     );
+
     if (doesEmailAlreadyExist)
       return HttpResponseHelper.badRequest(
         new EmailAlreadyExistsError()
