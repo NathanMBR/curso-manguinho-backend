@@ -13,12 +13,12 @@ import { zodSignUpSchema } from "./zodSignUpSchema";
 
 const getCharacters = (quantity: number): string => {
   const lowerCaseAlphabetStartCode = 97;
-  const lettersInAlphabet = 26;
+  const alphabetLength = 26;
 
   let characters = "";
 
   for (let i = 0; i < quantity; i++) {
-    const randomCharacterCode = Math.floor(Math.random() * lettersInAlphabet) + lowerCaseAlphabetStartCode;
+    const randomCharacterCode = Math.floor(Math.random() * alphabetLength) + lowerCaseAlphabetStartCode;
     characters += String.fromCharCode(randomCharacterCode);
   }
 
@@ -53,7 +53,6 @@ describe("ZodSignUpSchema Test", () => {
 
     expect(SUTResponse.success).toBe(false);
     expect(issue.message).toBe("The account name is required");
-    
   });
 
   it("should return an error if name isn't a string", () => {
@@ -136,6 +135,22 @@ describe("ZodSignUpSchema Test", () => {
     expect(issue.message).toBe("The account email must have at most 255 characters");
   });
 
+  it("should return an error if email isn't in a valid format", () => {
+    const SUTRequest = {
+      name: "Test name",
+      email: "invalid-email",
+      password: "test1234"
+    };
+
+    type SUTError = SafeParseError<typeof SUTRequest>;
+
+    const SUTResponse = zodSignUpSchema.safeParse(SUTRequest) as SUTError;
+    const issue = SUTResponse.error.issues[0] as ZodIssue;
+
+    expect(SUTResponse.success).toBe(false);
+    expect(issue.message).toBe("The account email must be in a valid format");
+  });
+
   it("should return an error if password isn't defined", () => {
     const SUTRequest = {
       name: "Test name",
@@ -197,7 +212,7 @@ describe("ZodSignUpSchema Test", () => {
   });
 
   it("should return an error if payload isn't an object", () => {
-    const SUTRequest = "not an object";
+    const SUTRequest = "invalid-payload";
 
     type SUTError = SafeParseError<typeof SUTRequest>;
 
