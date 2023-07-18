@@ -21,7 +21,7 @@ export const zodSignUpSchema = zod.object(
         }
       )
       .max(255, "The account email must have at most 255 characters")
-      .email(),
+      .email("The account email must be in a valid format"),
 
     password: zod
       .string(
