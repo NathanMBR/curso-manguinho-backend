@@ -9,6 +9,10 @@ export abstract class HttpResponseHelper {
     return new Controller.HttpResponse(400, error);
   }
 
+  public static notFound(error: Error): Controller.HttpResponse {
+    return new Controller.HttpResponse(404, error);
+  }
+
   public static internalServerError(error: Error): Controller.HttpResponse {
     return new Controller.HttpResponse(500, error);
   }
