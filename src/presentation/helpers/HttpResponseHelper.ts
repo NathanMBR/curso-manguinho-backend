@@ -9,6 +9,10 @@ export abstract class HttpResponseHelper {
     return new Controller.HttpResponse(201, body);
   }
 
+  public static noContent(): Controller.HttpResponse {
+    return new Controller.HttpResponse(204, null);
+  }
+
   public static badRequest(error: Error): Controller.HttpResponse {
     return new Controller.HttpResponse(400, error);
   }
