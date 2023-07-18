@@ -125,8 +125,8 @@ describe("JWT Adapter Sign Method", () => {
       }
     };
     
-    const getSUTResponse = async () => SUT.sign(SUTRequest);
+    const getSUTResponse = () => SUT.sign(SUTRequest);
 
-    expect(getSUTResponse).rejects.toThrow();
+    expect(getSUTResponse).toThrow();
   });
 });
