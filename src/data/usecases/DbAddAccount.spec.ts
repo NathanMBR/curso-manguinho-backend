@@ -118,12 +118,10 @@ describe("DbAddAccount UseCase", () => {
   it("should repass encrypter errors to upper level", async () => {
     const { SUT, encrypter } = getSUTEnvironment();
 
-    jest.spyOn(encrypter, "encrypt").mockImplementation(
-      () => new Promise(
-        (_resolve, reject) => reject(
-          new Error()
-        )
-      )
+    jest.spyOn(encrypter, "encrypt").mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
     );
 
     const accountData = {
@@ -139,12 +137,10 @@ describe("DbAddAccount UseCase", () => {
   it("should repass add account repository errors to upper level", async () => {
     const { SUT, addAccountRepository } = getSUTEnvironment();
 
-    jest.spyOn(addAccountRepository, "add").mockImplementation(
-      () => new Promise(
-        (_resolve, reject) => reject(
-          new Error()
-        )
-      )
+    jest.spyOn(addAccountRepository, "add").mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
     );
 
     const accountData = {
