@@ -9,10 +9,10 @@ import {
 
 import { createApp } from "./createApp";
 
-let app: FastifyInstance;
-let request: supertest.SuperTest<supertest.Test>; 
-
 describe("CORS Test", () => {
+  let app: FastifyInstance;
+  let request: supertest.SuperTest<supertest.Test>;
+
   beforeAll(async () => {
     app = await createApp();
     request = supertest(app.server);
@@ -31,4 +31,4 @@ describe("CORS Test", () => {
       .get("/test")
       .expect("access-control-allow-origin", "*");
   });
-})
+});
