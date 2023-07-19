@@ -32,6 +32,14 @@ jest.spyOn(zodSignUpSchema, "safeParse").mockReturnValue(
   }
 );
 
+jest.spyOn(zodSignUpSchema, "parse").mockReturnValue(
+  {
+    name: "Test Name",
+    email: "test@email.com",
+    password: "test1234"
+  }
+);
+
 describe("Zod SignUp Validator", () => {
   it("should successfully validate sign up payload", () => {
     const { SUT } = getSUTEnvironment();
@@ -79,7 +87,7 @@ describe("Zod SignUp Validator", () => {
     const safeParseSpy = jest.spyOn(zodSignUpSchema, "safeParse");
 
     const SUTRequest = {
-      name: "Test name",
+      name: "Test Name",
       email: "test@email.com",
       password: "test1234"
     };
@@ -92,13 +100,35 @@ describe("Zod SignUp Validator", () => {
   it("should not use error throwing zod method", () => {
     const { SUT } = getSUTEnvironment();
 
+    const parseSpy = jest.spyOn(zodSignUpSchema, "parse");
+
     const SUTRequest = {
-      name: "Test name",
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    SUT.validate(SUTRequest);
+
+    expect(parseSpy).not.toHaveBeenCalled();
+  });
+
+  it("should repass zod errors to upper level", () => {
+    const { SUT } = getSUTEnvironment();
+
+    jest.spyOn(zodSignUpSchema, "safeParse").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTRequest = {
+      name: "Test Name",
       email: "test@email.com",
       password: "test1234"
     };
 
     const getSUTResponse = () => SUT.validate(SUTRequest);
-    expect(getSUTResponse).not.toThrow();
+    expect(getSUTResponse).toThrow();
   });
 });
