@@ -208,6 +208,72 @@ describe("SignUp Controller", () => {
 
     await SUT.handle(SUTRequest);
 
-    expect(addSpy).toHaveBeenCalledWith(SUTRequest.body)
+    expect(addSpy).toHaveBeenCalledWith(SUTRequest.body);
+  });
+
+  it("should repass sign up validator errors to upper level", async () => {
+    const { SUT, validator } = getSUTEnvironment();
+
+    const SUTRequest = {
+      body: {
+        name: "Test",
+        email: "test@email.com",
+        password: "test"
+      }
+    };
+
+    jest.spyOn(validator, "validate").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.handle(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
+  });
+
+  it("should repass find one account by email errors to upper level", async () => {
+    const { SUT, findOneAccountByEmail } = getSUTEnvironment();
+
+    const SUTRequest = {
+      body: {
+        name: "Test",
+        email: "test@email.com",
+        password: "test"
+      }
+    };
+
+    jest.spyOn(findOneAccountByEmail, "findOneByEmail").mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.handle(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
+  });
+
+  it("should repass add account errors to upper level", async () => {
+    const { SUT, addAccount } = getSUTEnvironment();
+
+    const SUTRequest = {
+      body: {
+        name: "Test",
+        email: "test@email.com",
+        password: "test"
+      }
+    };
+
+    jest.spyOn(addAccount, "add").mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.handle(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
   });
 });
