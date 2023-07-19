@@ -5,8 +5,11 @@ import {
   HookHandlerDoneFunction
 } from "fastify";
 
+import {
+  makeSignUpController,
+  makeLogInController
+} from "../../factories";
 import { fastifyRouteAdapter } from "../../adapters";
-import { makeSignUpController } from "../../factories";
 
 export const accountRoutes = (
   app: FastifyInstance,
@@ -14,10 +17,13 @@ export const accountRoutes = (
   done: HookHandlerDoneFunction
 ) => {
   const signUpController = makeSignUpController();
+  const logInController = makeLogInController();
 
   const signUpRoute = fastifyRouteAdapter(signUpController);
+  const logInRoute = fastifyRouteAdapter(logInController);
 
   app.post("/signup", signUpRoute);
+  app.post("/login", logInRoute);
 
   return done();
 };
