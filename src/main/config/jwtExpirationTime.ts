@@ -1,0 +1,1 @@
+export const jwtExpirationTime: string | number = "7d";
