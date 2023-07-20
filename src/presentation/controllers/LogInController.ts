@@ -60,16 +60,17 @@ export class LogInController implements Controller.Protocol {
 
     const authenticationToken = this.authenticateAccount.authenticate(account);
 
-    const accountWithoutPassword: Omit<typeof account, "password"> = {
+    const sanitizedAccount: Omit<typeof account, "password"> = {
       id: account.id,
       name: account.name,
-      email: account.email
+      email: account.email,
+      type: account.type
     };
 
     return HttpResponseHelper.ok(
       {
         token: authenticationToken,
-        account: accountWithoutPassword
+        account: sanitizedAccount
       }
     );
   }
