@@ -9,11 +9,11 @@ import {
   ValidationError,
   EmailAlreadyExistsError
 } from "../errors";
-import { Validator } from "../protocols";
 import {
   FindOneAccountByEmail,
   AddAccount
 } from "../../domain/usecases";
+import { Validator } from "../protocols";
 
 import { SignUpController } from "./SignUpController";
 
@@ -44,14 +44,15 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
 
   class AddAccountSub implements AddAccount.Protocol {
     async add(_account: AddAccount.Request): AddAccount.Response {
-      const fakeAccount = {
-        id: "test_id",
-        name: "Test Name",
-        email: "test@email.com",
-        password: "test1234"
-      };
-
-      return fakeAccount;
+      return Promise.resolve(
+        {
+          id: "test_id",
+          name: "Test Name",
+          email: "test@email.com",
+          password: "test1234",
+          type: "COMMON"
+        }
+      );
     }
   }
 
@@ -85,14 +86,16 @@ describe("SignUp Controller", () => {
     };
 
     const SUTResponse = await SUT.handle(SUTRequest);
+
+    const expectedResponse = {
+      id: "test_id",
+      name: SUTRequest.body.name,
+      email: SUTRequest.body.email,
+      type: "COMMON"
+    };
+
     expect(SUTResponse.statusCode).toBe(200);
-    expect(SUTResponse.body).toEqual(
-      {
-        id: "test_id",
-        name: SUTRequest.body.name,
-        email: SUTRequest.body.email
-      }
-    );
+    expect(SUTResponse.body).toEqual(expectedResponse);
   });
 
   it("should not return password in the response body", async () => {
@@ -140,7 +143,8 @@ describe("SignUp Controller", () => {
           id: "existent_id",
           name: "Existent Test User",
           email: "existent@test.com",
-          password: "existent1234"
+          password: "existent1234",
+          type: "COMMON"
         }
       )
     );
