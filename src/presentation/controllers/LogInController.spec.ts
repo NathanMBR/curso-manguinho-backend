@@ -45,7 +45,8 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
           id: "test-id",
           name: "Test Name",
           email: "test@email.com",
-          password: "test-password-hash"
+          password: "test-password-hash",
+          type: "COMMON"
         }
       );
     }
@@ -103,7 +104,8 @@ describe("LogIn Controller", () => {
       account: {
         id: "test-id",
         name: "Test Name",
-        email: "test@email.com"
+        email: "test@email.com",
+        type: "COMMON"
       }
     };
 
@@ -259,7 +261,8 @@ describe("LogIn Controller", () => {
       id: "test-id",
       name: "Test Name",
       email: "test@email.com",
-      password: "test-password-hash"
+      password: "test-password-hash",
+      type: "COMMON"
     };
 
     expect(authenticateSpy).toHaveBeenCalledWith(expectedCall);
