@@ -10,9 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AccountType {
+  COMMON
+  ADMIN
+}
+
 model Account {
   id String @id @default(uuid())
   name String @db.VarChar()
   email String @db.VarChar()
   password String @db.VarChar()
+  type AccountType @default(COMMON)
 }
