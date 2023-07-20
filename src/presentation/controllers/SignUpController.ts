@@ -44,7 +44,7 @@ export class SignUpController implements Controller.Protocol {
         new EmailAlreadyExistsError()
       );
 
-    const rawAccount = await this.addAccount.add(
+    const account = await this.addAccount.add(
       {
         name,
         email,
@@ -52,12 +52,13 @@ export class SignUpController implements Controller.Protocol {
       }
     );
 
-    const account: Omit<typeof rawAccount, "password"> = {
-      id: rawAccount.id,
-      name: rawAccount.name,
-      email: rawAccount.email
+    const sanitizedAccount: Omit<typeof account, "password"> = {
+      id: account.id,
+      name: account.name,
+      email: account.email,
+      type: account.type
     };
 
-    return HttpResponseHelper.ok(account);
+    return HttpResponseHelper.ok(sanitizedAccount);
   }
 }
