@@ -4,7 +4,8 @@
   "description": "Curso de Clean Architecture em Node.js do Rodrigo Manguinho",
   "main": "./build/main/server.js",
   "scripts": {
-    "build": "tsc",
+    "lint": "tsc --noEmit",
+    "build": "tsc -p ./tsconfig.build.json",
     "start": "node .",
     "start:dev": "node -r dotenv/config .",
     "test": "jest --passWithNoTests --coverage",
