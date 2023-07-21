@@ -15,10 +15,51 @@ enum AccountType {
   ADMIN
 }
 
+enum QuestionType {
+  SINGLE
+  MULTIPLE
+}
+
 model Account {
   id String @id @default(uuid())
   name String @db.VarChar()
   email String @db.VarChar()
   password String @db.VarChar()
   type AccountType @default(COMMON)
+
+  @@map("accounts")
+}
+
+model Survey {
+  id String @id @default(uuid())
+  title String @db.VarChar()
+  description String? @db.Text()
+  expiresAt DateTime? @db.Timestamptz()
+
+  questions Question[]
+
+  @@map("surveys")
+}
+
+model Question {
+  id String @id @default(uuid())
+  title String @db.VarChar()
+  description String? @db.Text()
+  type QuestionType
+  surveyId String @db.VarChar()
+
+  survey Survey @relation(fields: [surveyId], references: [id])
+  answers Answer[]
+
+  @@map("questions")
+}
+
+model Answer {
+  id String @id @default(uuid())
+  body String @db.Text()
+  questionId String @db.VarChar()
+
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@map("answers")
 }
