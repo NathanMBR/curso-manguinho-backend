@@ -1,4 +1,4 @@
-import { Account } from "../models";
+import { Account } from "../../models";
 
 export namespace AuthenticateAccount {
   export type Request = Account;

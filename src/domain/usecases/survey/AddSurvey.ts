@@ -2,7 +2,7 @@ import {
   Survey,
   Question,
   Answer
-} from "../models";
+} from "../../models";
 
 export namespace AddSurvey {
   type RequestAnswer = Omit<Answer, "id">;
