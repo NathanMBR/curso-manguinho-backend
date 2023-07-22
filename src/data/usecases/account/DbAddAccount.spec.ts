@@ -9,7 +9,7 @@ import { DbAddAccount } from "./DbAddAccount";
 import {
   AddAccountRepository,
   Encrypter
-} from "../protocols";
+} from "../../protocols";
 
 interface GetSUTEnvironmentResponse {
   encrypter: Encrypter.Protocol;

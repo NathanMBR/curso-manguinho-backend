@@ -1,5 +1,5 @@
-import { CompareAccountPassword } from "../../domain/usecases";
-import { HashComparer } from "../protocols";
+import { CompareAccountPassword } from "../../../domain/usecases";
+import { HashComparer } from "../../protocols";
 
 export class DbCompareAccountPassword implements CompareAccountPassword.Protocol {
   constructor(

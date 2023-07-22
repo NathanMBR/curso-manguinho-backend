@@ -6,7 +6,7 @@ import {
 } from "@jest/globals";
 
 import { DbCompareAccountPassword } from "./DbCompareAccountPassword";
-import { HashComparer } from "../protocols";
+import { HashComparer } from "../../protocols";
 
 interface GetSUTEnvironmentResponse {
   hashComparer: HashComparer.Protocol;

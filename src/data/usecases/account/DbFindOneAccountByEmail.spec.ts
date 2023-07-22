@@ -6,7 +6,7 @@ import {
 } from "@jest/globals";
 
 import { DbFindOneAccountByEmail } from "./DbFindOneAccountByEmail";
-import { FindOneAccountByEmailRepository } from "../protocols";
+import { FindOneAccountByEmailRepository } from "../../protocols";
 
 interface GetSUTEnvironmentResponse {
   findOneAccountByEmailRepository: FindOneAccountByEmailRepository.Protocol;

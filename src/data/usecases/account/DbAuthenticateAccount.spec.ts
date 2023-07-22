@@ -5,7 +5,7 @@ import {
   jest
 } from "@jest/globals";
 
-import { TokenSigner } from "../protocols";
+import { TokenSigner } from "../../protocols";
 import { DbAuthenticateAccount } from "./DbAuthenticateAccount";
 
 interface GetSUTEnvironmentResponse {

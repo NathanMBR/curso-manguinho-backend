@@ -1,5 +1,5 @@
-import { AuthenticateAccount } from "../../domain/usecases";
-import { TokenSigner } from "../protocols";
+import { AuthenticateAccount } from "../../../domain/usecases";
+import { TokenSigner } from "../../protocols";
 
 export class DbAuthenticateAccount implements AuthenticateAccount.Protocol {
   constructor(

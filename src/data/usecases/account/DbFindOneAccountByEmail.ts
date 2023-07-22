@@ -1,5 +1,5 @@
-import { FindOneAccountByEmail } from "../../domain/usecases";
-import { FindOneAccountByEmailRepository } from "../protocols";
+import { FindOneAccountByEmail } from "../../../domain/usecases";
+import { FindOneAccountByEmailRepository } from "../../protocols";
 
 export class DbFindOneAccountByEmail implements FindOneAccountByEmail.Protocol {
   constructor(

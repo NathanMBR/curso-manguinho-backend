@@ -1,5 +1,5 @@
-import { AddAccount } from "../../domain/usecases";
-import { AddAccountRepository, Encrypter } from "../protocols";
+import { AddAccount } from "../../../domain/usecases";
+import { AddAccountRepository, Encrypter } from "../../protocols";
 
 export class DbAddAccount implements AddAccount.Protocol {
   constructor(
