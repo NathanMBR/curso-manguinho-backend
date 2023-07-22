@@ -21,8 +21,9 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
         id: "test_id",
         name: "Test Name",
         email: "test@email.com",
-        password: "test1234"
-      };
+        password: "test1234",
+        type: "COMMON"
+      } as const;
 
       return Promise.resolve(account);
     }

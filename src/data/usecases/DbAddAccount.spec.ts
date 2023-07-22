@@ -20,20 +20,21 @@ interface GetSUTEnvironmentResponse {
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class EncrypterStub implements Encrypter.Protocol {
-    async encrypt(value: string) {
+    async encrypt(_value: string) {
       return Promise.resolve("hashed_value");
     }
   }
 
   class AddAccountRepositoryStub implements AddAccountRepository.Protocol {
-    async add(account: AddAccountRepository.Request) {
+    async add(_account: AddAccountRepository.Request) {
       return Promise.resolve(
         {
           id: "test_id",
           name: "Test Name",
           email: "test@email.com",
-          password: "test1234"
-        }
+          password: "test1234",
+          type: "COMMON"
+        } as const
       );
     }
   }

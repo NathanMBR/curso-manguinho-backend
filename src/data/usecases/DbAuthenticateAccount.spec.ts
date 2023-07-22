@@ -42,8 +42,9 @@ describe("DbAuthenticateAccount UseCase", () => {
       id: "test-id",
       name: "Test Name",
       email: "test@email.com",
-      password: "test1234"
-    };
+      password: "test1234",
+      type: "COMMON"
+    } as const;
 
     const SUTResponse = SUT.authenticate(SUTRequest);
     const expectedResponse = "test-token";
@@ -60,8 +61,9 @@ describe("DbAuthenticateAccount UseCase", () => {
       id: "test-id",
       name: "Test Name",
       email: "test@email.com",
-      password: "test1234"
-    };
+      password: "test1234",
+      type: "COMMON"
+    } as const;
 
     SUT.authenticate(SUTRequest);
 
@@ -85,8 +87,9 @@ describe("DbAuthenticateAccount UseCase", () => {
       id: "test-id",
       name: "Test Name",
       email: "test@email.com",
-      password: "test1234"
-    };
+      password: "test1234",
+      type: "COMMON"
+    } as const;
 
     SUT.authenticate(SUTRequest);
 
@@ -115,8 +118,9 @@ describe("DbAuthenticateAccount UseCase", () => {
       id: "test-id",
       name: "Test Name",
       email: "test@email.com",
-      password: "test1234"
-    };
+      password: "test1234",
+      type: "COMMON"
+    } as const;
 
     const getSUTResponse = () => SUT.authenticate(SUTRequest);
 
