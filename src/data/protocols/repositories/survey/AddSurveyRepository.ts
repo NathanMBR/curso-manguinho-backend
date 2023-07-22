@@ -11,7 +11,7 @@ export namespace AddSurveyRepository {
     answers: Array<RequestRepositoryAnswer>
   };
 
-  type RequestRepositorySurvey = Omit<RequestRepositoryQuestion, "id" | "questions"> & {
+  type RequestRepositorySurvey = Omit<RepositorySurvey, "id" | "questions"> & {
     questions: Array<RequestRepositoryQuestion>
   };
 
