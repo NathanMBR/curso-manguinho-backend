@@ -5,7 +5,7 @@ export type RepositoryQuestionType = "SINGLE" | "MULTIPLE";
 export interface RepositoryQuestion {
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   type: RepositoryQuestionType;
   surveyId: string;
   answers: Array<RepositoryAnswer>;
