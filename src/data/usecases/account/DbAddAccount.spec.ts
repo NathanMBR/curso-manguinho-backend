@@ -33,8 +33,8 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
           name: "Test Name",
           email: "test@email.com",
           password: "test1234",
-          type: "COMMON"
-        } as const
+          type: "COMMON" as const
+        }
       );
     }
   }
@@ -71,7 +71,8 @@ describe("DbAddAccount UseCase", () => {
         id: "test_id",
         name: "Test Name",
         email: "test@email.com",
-        password: "test1234"
+        password: "test1234",
+        type: "COMMON"
       }
     );
   });
