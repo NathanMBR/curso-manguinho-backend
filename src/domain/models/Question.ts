@@ -5,7 +5,7 @@ export type QuestionType = "SINGLE" | "MULTIPLE";
 export interface Question {
   id: string;
   title: string;
-  description?: string;
+  description: string | null;
   type: QuestionType;
   surveyId: string;
   answers: Array<Answer>;
