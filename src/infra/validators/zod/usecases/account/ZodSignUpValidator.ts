@@ -1,6 +1,6 @@
-import { SignUpValidator } from "../../../validation/protocols";
-import { zodSignUpSchema } from "./schemas"
-import { zodValidationAdapter } from "./adapters";
+import { SignUpValidator } from "../../../../../validation/protocols";
+import { zodSignUpSchema } from "../../schemas"
+import { zodValidationAdapter } from "../../adapters";
 
 export class ZodSignUpValidator implements SignUpValidator.Protocol {
   validate(data: unknown) {

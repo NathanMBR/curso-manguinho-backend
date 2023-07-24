@@ -6,7 +6,7 @@ import {
 } from "@jest/globals";
 import { ZodError } from "zod";
 
-import { zodSignUpSchema } from "./schemas";
+import { zodSignUpSchema } from "../../schemas";
 import { ZodSignUpValidator } from "./ZodSignUpValidator";
 
 interface GetSUTEnvironmentResponse {
