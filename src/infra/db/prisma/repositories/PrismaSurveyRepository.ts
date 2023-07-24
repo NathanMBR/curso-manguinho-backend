@@ -12,12 +12,31 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
 
     const survey = await prisma.$transaction(
       async transaction => {
-        const questionsIds = await Promise.all(
+        const surveyId = await transaction.survey.create(
+          {
+            data: {
+              title,
+              description,
+              expiresAt
+            },
+
+            select: {
+              id: true
+            }
+          }
+        );
+
+        await Promise.all(
           questions.map(
             ({ answers, ...question }) => transaction.question.create(
               {
                 data: {
                   ...question,
+                  survey: {
+                    connect: {
+                      id: surveyId.id
+                    }
+                  },
                   answers: {
                     createMany: {
                       data: answers
@@ -33,15 +52,10 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
           )
         );
 
-        const createdSurvey = await transaction.survey.create(
+        const surveyWithQuestionsAndAnswers = await transaction.survey.findUnique(
           {
-            data: {
-              title,
-              description,
-              expiresAt,
-              questions: {
-                connect: questionsIds
-              }
+            where: {
+              id: surveyId.id
             },
 
             include: {
@@ -54,7 +68,10 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
           }
         );
 
-        return createdSurvey;
+        if (!surveyWithQuestionsAndAnswers)
+          throw new Error("Unexpected missing survey");
+
+        return surveyWithQuestionsAndAnswers;
       }
     );
 
