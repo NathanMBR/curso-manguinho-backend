@@ -50,7 +50,11 @@ describe("Zod LogIn Validator", () => {
     const SUTResponse = SUT.validate(SUTRequest);
     const expectedResponse = {
       isValid: true,
-      errors: []
+      errors: [],
+      data: {
+        email: "test@email.com",
+        password: "test1234"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
