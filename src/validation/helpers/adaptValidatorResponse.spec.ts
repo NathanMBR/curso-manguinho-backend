@@ -6,8 +6,9 @@ import {
 
 import { adaptValidatorResponse } from "./adaptValidatorResponse";
 
-type SUTSuccessfulResponse = {
+type SUTSuccessfulResponse<T> = {
   isValid: true;
+  data: T
 };
 
 type SUTFailureResponse = {
@@ -17,12 +18,17 @@ type SUTFailureResponse = {
 
 describe("ValidatorResponse Adapter", () => {
   it("should successfully adapt a validator response", () => {
+    const data = {
+      test: "Test data"
+    };
+
     const SUTResponse = adaptValidatorResponse(
       {
         isValid: true,
-        errors: []
+        errors: [],
+        data
       }
-    ) as SUTSuccessfulResponse;
+    ) as SUTSuccessfulResponse<typeof data>;
 
     expect(SUTResponse.isValid).toBe(true);
   });
@@ -55,6 +61,31 @@ describe("ValidatorResponse Adapter", () => {
     expect(SUTResponse.errorMessage).toBe("Test error 1");
   });
 
+  it("should throw error if valid and contains error message", () => {
+    const getSUTResponse = () => adaptValidatorResponse(
+      {
+        isValid: true,
+        errors: [
+          "Test error"
+        ],
+        data: "Test data"
+      }
+    );
+
+    expect(getSUTResponse).toThrowError(new Error("Unexpected error message to adapt"));
+  });
+
+  it("should throw error if valid and missing data", () => {
+    const getSUTResponse = () => adaptValidatorResponse(
+      {
+        isValid: true,
+        errors: []
+      }
+    );
+
+    expect(getSUTResponse).toThrowError(new Error("Missing validated data"));
+  });
+
   it("should throw error if not valid and missing error message", () => {
     const getSUTResponse = () => adaptValidatorResponse(
       {
@@ -66,16 +97,17 @@ describe("ValidatorResponse Adapter", () => {
     expect(getSUTResponse).toThrowError(new Error("Missing error message to adapt"));
   });
 
-  it("should throw error if valid and contains error message", () => {
+  it("should throw error if not valid and contains data", () => {
     const getSUTResponse = () => adaptValidatorResponse(
       {
-        isValid: true,
+        isValid: false,
         errors: [
           "Test error"
-        ]
+        ],
+        data: "Test data"
       }
     );
 
-    expect(getSUTResponse).toThrowError(new Error("Unexpected error message to adapt"));
+    expect(getSUTResponse).toThrowError(new Error("Unexpected data with failed validation"));
   });
 });
