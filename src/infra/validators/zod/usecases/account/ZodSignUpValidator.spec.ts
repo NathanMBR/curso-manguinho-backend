@@ -47,7 +47,12 @@ describe("Zod SignUp Validator", () => {
     const SUTResponse = SUT.validate("test");
     const expectedSUTResponse = {
       isValid: true,
-      errors: []
+      errors: [],
+      data: {
+        name: "Test Name",
+        email: "test@email.com",
+        password: "test1234"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedSUTResponse);
