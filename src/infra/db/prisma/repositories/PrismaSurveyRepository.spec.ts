@@ -28,12 +28,10 @@ const getStubQuestion: () => Promise<any> = async () => Promise.resolve(
     title: "Test Question Title",
     description: "test question description",
     type: "SINGLE",
-    surveyId: "test-survey-id",
     answers: [
       {
         id: "test-answer-id",
-        body: "test answer body",
-        questionId: "test-question-id"
+        body: "test answer body"
       }
     ]
   }
@@ -57,6 +55,7 @@ const getStubSurvey: () => Promise<any> = async () => {
 
 const createQuestionMock = jest.fn(getStubQuestion);
 const createSurveyMock = jest.fn(getStubSurvey);
+const findUniqueSurveyMock = jest.fn(getStubSurvey);
 
 const mockTransaction = {
   question: {
@@ -64,7 +63,8 @@ const mockTransaction = {
   },
 
   survey: {
-    create: createSurveyMock
+    create: createSurveyMock,
+    findUnique: findUniqueSurveyMock
   }
 } as any;
 
@@ -92,11 +92,9 @@ describe("Prisma AddSurvey Repository", () => {
           title: "Test Question Title",
           description: "test question description",
           type: "SINGLE" as const,
-          surveyId: "test-survey-id",
           answers: [
             {
-              body: "test answer body",
-              questionId: "test-question-id"
+              body: "test answer body"
             }
           ]
         }
@@ -114,12 +112,10 @@ describe("Prisma AddSurvey Repository", () => {
           title: "Test Question Title",
           description: "test question description",
           type: "SINGLE",
-          surveyId: "test-survey-id",
           answers: [
             {
               id: "test-answer-id",
-              body: "test answer body",
-              questionId: "test-question-id"
+              body: "test answer body"
             }
           ]
         }
@@ -131,12 +127,49 @@ describe("Prisma AddSurvey Repository", () => {
     expect(SUTResponse).toEqual(expectedResponse);
   });
 
+  it("should pass survey data to prisma survey create call", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      title: "Test Survey Title",
+      description: "test survey description",
+      expiresAt: globalDate,
+      questions: [
+        {
+          title: "Test Question Title",
+          description: "test question description",
+          type: "SINGLE" as const,
+          answers: [
+            {
+              body: "test answer body"
+            }
+          ]
+        }
+      ]
+    };
+
+    await SUT.add(SUTRequest);
+
+    const expectedCall = {
+      data: {
+        title: "Test Survey Title",
+        description: "test survey description",
+        expiresAt: globalDate
+      },
+
+      select: {
+        id: true
+      }
+    };
+
+    expect(createSurveyMock).toHaveBeenCalledWith(expectedCall);
+  });
+
   it("should pass question data to prisma question create call", async () => {
     const { SUT } = getSUTEnvironment();
 
     const SUTRequestAnswer = {
-      body: "test answer body",
-      questionId: "test-question-id"
+      body: "test answer body"
     };
 
     const SUTRequest = {
@@ -148,7 +181,6 @@ describe("Prisma AddSurvey Repository", () => {
           title: "Test Question Title",
           description: "test question description",
           type: "SINGLE" as const,
-          surveyId: "test-survey-id",
           answers: [
             SUTRequestAnswer
           ]
@@ -163,7 +195,13 @@ describe("Prisma AddSurvey Repository", () => {
         title: "Test Question Title",
         description: "test question description",
         type: "SINGLE" as const,
-        surveyId: "test-survey-id",
+
+        survey: {
+          connect: {
+            id: "test-survey-id"
+          }
+        },
+
         answers: {
           createMany: {
             data: [
@@ -181,7 +219,7 @@ describe("Prisma AddSurvey Repository", () => {
     expect(createQuestionMock).toHaveBeenCalledWith(expectedCall);
   });
 
-  it("should pass survey data to prisma survey create call", async () => {
+  it("should pass survey id to prisma survey find unique call", async () => {
     const { SUT } = getSUTEnvironment();
 
     const SUTRequest = {
@@ -193,11 +231,9 @@ describe("Prisma AddSurvey Repository", () => {
           title: "Test Question Title",
           description: "test question description",
           type: "SINGLE" as const,
-          surveyId: "test-survey-id",
           answers: [
             {
-              body: "test answer body",
-              questionId: "test-question-id"
+              body: "test answer body"
             }
           ]
         }
@@ -207,28 +243,8 @@ describe("Prisma AddSurvey Repository", () => {
     await SUT.add(SUTRequest);
 
     const expectedCall = {
-      data: {
-        title: "Test Survey Title",
-        description: "test survey description",
-        expiresAt: globalDate,
-        questions: {
-          connect: [
-            {
-              id: "test-question-id",
-              title: "Test Question Title",
-              description: "test question description",
-              type: "SINGLE",
-              surveyId: "test-survey-id",
-              answers: [
-                {
-                  id: "test-answer-id",
-                  body: "test answer body",
-                  questionId: "test-question-id"
-                }
-              ]
-            }
-          ]
-        }
+      where: {
+        id: "test-survey-id"
       },
 
       include: {
@@ -240,7 +256,7 @@ describe("Prisma AddSurvey Repository", () => {
       }
     };
 
-    expect(createSurveyMock).toHaveBeenCalledWith(expectedCall);
+    expect(findUniqueSurveyMock).toHaveBeenCalledWith(expectedCall);
   });
 
   it("should repass prisma errors to upper level", async () => {
