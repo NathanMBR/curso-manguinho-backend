@@ -13,10 +13,11 @@ import {
   InvalidPasswordError
 } from "../errors";
 import { HttpResponseHelper } from "../helpers";
+import { LogInRequest } from "../models";
 
 export class LogInController implements Controller.Protocol {
   constructor(
-    private readonly logInValidator: Validator.Protocol,
+    private readonly logInValidator: Validator.Protocol<LogInRequest>,
     private readonly findOneAccountByEmail: FindOneAccountByEmail.Protocol,
     private readonly compareAccountPassword: CompareAccountPassword.Protocol,
     private readonly authenticateAccount: AuthenticateAccount.Protocol
@@ -33,7 +34,7 @@ export class LogInController implements Controller.Protocol {
     const {
       email,
       password
-    } = httpRequest.body;
+    } = requestValidation.data;
 
     const account = await this.findOneAccountByEmail.findOneByEmail(
       {
