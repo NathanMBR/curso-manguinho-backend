@@ -18,9 +18,10 @@ import {
 } from "../../domain/usecases";
 
 import { LogInController } from "./LogInController";
+import { LogInRequest } from "../models";
 
 interface GetSUTEnvironmentReturn {
-  validator: Validator.Protocol;
+  validator: Validator.Protocol<LogInRequest>;
 
   findOneAccountByEmail: FindOneAccountByEmail.Protocol;
   compareAccountPassword: CompareAccountPassword.Protocol;
@@ -30,10 +31,14 @@ interface GetSUTEnvironmentReturn {
 }
 
 const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
-  class ValidatorStub implements Validator.Protocol {
-    validate(_data: Validator.Request): Validator.Response {
+  class ValidatorStub implements Validator.Protocol<LogInRequest> {
+    validate(_data: Validator.Request): Validator.Response<LogInRequest> {
       return {
-        isValid: true
+        isValid: true,
+        data: {
+          email: "test@email.com",
+          password: "test1234"
+        }
       };
     }
   }
