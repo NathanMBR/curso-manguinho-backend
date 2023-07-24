@@ -1,4 +1,4 @@
-import { ValidationResponse } from "../models";
+import { ValidationResponse } from "../../models";
 
 export namespace SignUpValidator {
   export type Request = unknown;

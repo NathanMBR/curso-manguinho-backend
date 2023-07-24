@@ -1,2 +1,1 @@
-export * from "./SignUpValidator";
-export * from "./LogInValidator";
+export * from "./account";
