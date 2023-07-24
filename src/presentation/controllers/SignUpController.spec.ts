@@ -14,11 +14,12 @@ import {
   AddAccount
 } from "../../domain/usecases";
 import { Validator } from "../protocols";
+import { SignUpRequest } from "../models";
 
 import { SignUpController } from "./SignUpController";
 
 interface GetSUTEnvironmentReturn {
-  validator: Validator.Protocol;
+  validator: Validator.Protocol<SignUpRequest>;
 
   findOneAccountByEmail: FindOneAccountByEmail.Protocol;
   addAccount: AddAccount.Protocol;
@@ -28,10 +29,15 @@ interface GetSUTEnvironmentReturn {
 
 const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   // "stub mock": a mock that returns a fixed/constant value
-  class ValidatorStub implements Validator.Protocol {
-    validate(_data: Validator.Request): Validator.Response {
+  class ValidatorStub implements Validator.Protocol<SignUpRequest> {
+    validate(_data: Validator.Request): Validator.Response<SignUpRequest> {
       return {
-        isValid: true
+        isValid: true as const,
+        data: {
+          name: "Test Name",
+          email: "test@email.com",
+          password: "test1234"
+        }
       };
     }
   }
@@ -212,7 +218,13 @@ describe("SignUp Controller", () => {
 
     await SUT.handle(SUTRequest);
 
-    expect(addSpy).toHaveBeenCalledWith(SUTRequest.body);
+    const expectedCall = {
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    expect(addSpy).toHaveBeenCalledWith(expectedCall);
   });
 
   it("should repass sign up validator errors to upper level", async () => {
