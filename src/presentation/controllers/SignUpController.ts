@@ -6,15 +6,16 @@ import {
   FindOneAccountByEmail,
   AddAccount
 } from "../../domain/usecases";
-import { HttpResponseHelper } from "../helpers";
 import {
   EmailAlreadyExistsError,
   ValidationError
 } from "../errors";
+import { SignUpRequest } from "../models";
+import { HttpResponseHelper } from "../helpers";
 
 export class SignUpController implements Controller.Protocol {
   constructor(
-    private readonly signUpValidator: Validator.Protocol,
+    private readonly signUpValidator: Validator.Protocol<SignUpRequest>,
     private readonly findOneAccountByEmail: FindOneAccountByEmail.Protocol,
     private readonly addAccount: AddAccount.Protocol
   ) {}
@@ -31,7 +32,7 @@ export class SignUpController implements Controller.Protocol {
       name,
       email,
       password
-    } = httpRequest.body;
+    } = requestValidation.data;
 
     const doesEmailAlreadyExist = await this.findOneAccountByEmail.findOneByEmail(
       {
