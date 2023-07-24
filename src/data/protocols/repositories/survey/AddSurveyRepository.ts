@@ -5,13 +5,26 @@ import {
 } from "../../../models";
 
 export namespace AddSurveyRepository {
-  type RequestRepositoryAnswer = Omit<RepositoryAnswer, "id">;
+  type RequestRepositoryAnswer = Omit<
+    RepositoryAnswer,
+    "id" |
+    "questionId"
+  >;
 
-  type RequestRepositoryQuestion = Omit<RepositoryQuestion, "id" | "answers"> & {
+  type RequestRepositoryQuestion = Omit<
+    RepositoryQuestion,
+    "id" |
+    "surveyId" |
+    "answers"
+  > & {
     answers: Array<RequestRepositoryAnswer>
   };
 
-  type RequestRepositorySurvey = Omit<RepositorySurvey, "id" | "questions"> & {
+  type RequestRepositorySurvey = Omit<
+    RepositorySurvey,
+    "id" |
+    "questions"
+  > & {
     questions: Array<RequestRepositoryQuestion>
   };
 
