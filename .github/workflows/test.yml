@@ -44,6 +44,9 @@ jobs:
       - name: Run Prisma migrations
         run: pnpm exec prisma migrate deploy
 
+      - name: Lint application
+        run: pnpm run lint
+
       - name: Test application
         run: pnpm run test:ci
 
