@@ -1,2 +1,1 @@
-export * from "./zodSignUpSchema";
-export * from "./zodLogInSchema";
+export * from "./account";
