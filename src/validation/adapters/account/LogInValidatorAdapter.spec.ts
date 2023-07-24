@@ -19,7 +19,11 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     validate(_data: LogInValidator.Request): LogInValidator.Response {
       return {
         isValid: true,
-        errors: []
+        errors: [],
+        data: {
+          email: "test@email.com",
+          password: "test1234"
+        }
       };
     }
   }

@@ -19,7 +19,13 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     validate(_data: AddSurveyValidator.Request): AddSurveyValidator.Response {
       return {
         isValid: true,
-        errors: []
+        errors: [],
+        data: {
+          title: "Test Title",
+          description: "test description",
+          expiresAt: new Date(),
+          questions: []
+        }
       }
     }
   }
