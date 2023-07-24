@@ -1,8 +1,7 @@
 import {
   describe,
   it,
-  expect,
-  jest
+  expect
 } from "@jest/globals";
 
 import { zodValidationAdapter } from "./zodValidationAdapter";
@@ -14,14 +13,17 @@ describe("ZodValidation Adapter", () => {
       {
         success: true,
         data: {
-          test: "test"
+          test: "Test data"
         }
       }
     );
 
     const expectedResponse = {
       isValid: true,
-      errors: []
+      errors: [],
+      data: {
+        test: "Test data"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
