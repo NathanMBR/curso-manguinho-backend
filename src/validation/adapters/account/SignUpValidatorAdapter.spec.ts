@@ -5,7 +5,7 @@ import {
   jest
 } from "@jest/globals";
 
-import { SignUpValidator } from "../protocols";
+import { SignUpValidator } from "../../protocols";
 import { SignUpValidatorAdapter } from "./SignUpValidatorAdapter";
 
 interface GetSUTEnvironmentReturn {

@@ -1,6 +1,6 @@
-import { Validator } from "../../presentation/protocols";
-import { SignUpValidator } from "../protocols";
-import { adaptValidatorResponse } from "../helpers";
+import { Validator } from "../../../presentation/protocols";
+import { SignUpValidator } from "../../protocols";
+import { adaptValidatorResponse } from "../../helpers";
 
 export class SignUpValidatorAdapter implements Validator.Protocol {
   constructor(
