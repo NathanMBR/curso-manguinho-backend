@@ -14,6 +14,8 @@ interface GetSUTEnvironmentResponse {
   SUT: DbAddSurvey;
 }
 
+const globalDate = new Date();
+
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class AddSurveyRepositoryStub implements AddSurveyRepository.Protocol {
     async add(_request: AddSurveyRepository.Request) {
@@ -37,7 +39,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
             ]
           }
         ],
-        expiresAt: new Date()
+        expiresAt: globalDate
       };
 
       return Promise.resolve(survey);
@@ -63,7 +65,7 @@ describe("DbAddSurvey UseCase", () => {
     const SUTRequest = {
       title: "Test Survey Title",
       description: "test survey description",
-      expiresAt: new Date(),
+      expiresAt: globalDate,
       questions: [
         {
           title: "Test Question Title",
@@ -86,7 +88,7 @@ describe("DbAddSurvey UseCase", () => {
       id: "test-survey-id",
       title: "Test Survey Title",
       description: "test survey description",
-      expiresAt: new Date(),
+      expiresAt: globalDate,
       questions: [
         {
           id: "test-question-id",
@@ -116,7 +118,7 @@ describe("DbAddSurvey UseCase", () => {
     const SUTRequest = {
       title: "Test Survey Title",
       description: "test survey description",
-      expiresAt: new Date(),
+      expiresAt: globalDate,
       questions: [
         {
           title: "Test Question Title",
@@ -149,7 +151,7 @@ describe("DbAddSurvey UseCase", () => {
     const SUTRequest = {
       title: "Test Survey Title",
       description: "test survey description",
-      expiresAt: new Date(),
+      expiresAt: globalDate,
       questions: [
         {
           title: "Test Question Title",
