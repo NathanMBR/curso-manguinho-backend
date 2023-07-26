@@ -29,6 +29,7 @@ const returnAccountFunction: () => any = async () => Promise.resolve(
 );
 
 jest.spyOn(prisma.account, "create").mockImplementation(returnAccountFunction);
+jest.spyOn(prisma.account, "findUnique").mockImplementation(returnAccountFunction);
 jest.spyOn(prisma.account, "findFirst").mockImplementation(returnAccountFunction);
 
 describe("Prisma AddAccount Repository", () => {
@@ -81,6 +82,63 @@ describe("Prisma AddAccount Repository", () => {
     };
 
     const SUTResponse = SUT.add(accountData);
+    await expect(SUTResponse).rejects.toThrow();
+  });
+});
+
+describe("Prisma FindOneAccount Repository", () => {
+  it("should successfully find an account", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      id: "test-id"
+    };
+
+    const SUTResponse = await SUT.findOne(SUTRequest);
+
+    const expectedResponse = {
+      name: "Test Name",
+      email: "test@email.com",
+      password: "test1234"
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should pass search data to prisma account find unique call", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const findUniqueSpy = jest.spyOn(prisma.account, "findUnique");
+
+    const SUTRequest = {
+      id: "test-id"
+    };
+
+    await SUT.findOne(SUTRequest);
+
+    const expectedCall = {
+      where: {
+        id: SUTRequest.id
+      }
+    };
+
+    expect(findUniqueSpy).toBeCalledWith(expectedCall);
+  });
+
+  it("should repass prisma account find unique errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    jest.spyOn(prisma.account, "findUnique").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTRequest = {
+      id: "test-id"
+    };
+
+    const SUTResponse = SUT.findOne(SUTRequest);
     await expect(SUTResponse).rejects.toThrow();
   });
 });
