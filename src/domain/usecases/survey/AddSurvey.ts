@@ -5,9 +5,18 @@ import {
 } from "../../models";
 
 export namespace AddSurvey {
-  type RequestAnswer = Omit<Answer, "id">;
+  type RequestAnswer = Omit<
+    Answer,
+    "id" |
+    "questionId"
+  >;
 
-  type RequestQuestion = Omit<Question, "id" | "answers"> & {
+  type RequestQuestion = Omit<
+    Question,
+    "id" |
+    "surveyId" |
+    "answers"
+  > & {
     answers: Array<RequestAnswer>
   }
 
