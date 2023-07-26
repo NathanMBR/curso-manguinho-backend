@@ -8,6 +8,9 @@ export namespace Controller {
 
   export interface Request {
     body?: any;
+    authenticationData?: {
+      id: string;
+    };
   }
 
   export type Response = Promise<HttpResponse>;
