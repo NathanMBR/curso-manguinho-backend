@@ -266,6 +266,36 @@ describe("Prisma AddSurvey Repository", () => {
     expect(findUniqueSurveyMock).toHaveBeenCalledWith(expectedCall);
   });
 
+  it("should throw error if find unique doesn't find survey", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      title: "Test Survey Title",
+      description: "test survey description",
+      expiresAt: globalDate,
+      accountId: "test-account-id",
+      questions: [
+        {
+          title: "Test Question Title",
+          description: "test question description",
+          type: "SINGLE" as const,
+          surveyId: "test-survey-id",
+          answers: [
+            {
+              body: "test answer body",
+              questionId: "test-question-id"
+            }
+          ]
+        }
+      ]
+    };
+
+    findUniqueSurveyMock.mockReturnValueOnce(Promise.resolve(null));
+
+    const SUTResponse = SUT.add(SUTRequest);
+    await expect(SUTResponse).rejects.toThrowError(new Error("Unexpected missing survey"));
+  });
+
   it("should repass prisma errors to upper level", async () => {
     const { SUT } = getSUTEnvironment();
 
