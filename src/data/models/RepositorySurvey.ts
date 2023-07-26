@@ -5,5 +5,6 @@ export interface RepositorySurvey {
   title: string;
   description: string | null;
   expiresAt: Date | null;
+  accountId: string;
   questions: Array<RepositoryQuestion>;
 }
