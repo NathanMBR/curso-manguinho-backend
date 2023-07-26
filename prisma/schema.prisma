@@ -27,6 +27,8 @@ model Account {
   password String @db.VarChar()
   type AccountType @default(COMMON)
 
+  surveys Survey[]
+
   @@map("accounts")
 }
 
@@ -35,7 +37,9 @@ model Survey {
   title String @db.VarChar()
   description String? @db.Text()
   expiresAt DateTime? @db.Timestamptz()
+  accountId String @db.VarChar()
 
+  account Account @relation(fields: [accountId], references: [id])
   questions Question[]
 
   @@map("surveys")
