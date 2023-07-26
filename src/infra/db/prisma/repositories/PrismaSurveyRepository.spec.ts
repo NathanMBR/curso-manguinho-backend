@@ -45,6 +45,7 @@ const getStubSurvey: () => Promise<any> = async () => {
       id: "test-survey-id",
       title: "Test Survey Title",
       description: "test survey description",
+      accountId: "test-account-id",
       questions: [
         question
       ],
@@ -87,6 +88,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -106,6 +108,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           id: "test-question-id",
@@ -134,6 +137,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -154,7 +158,8 @@ describe("Prisma AddSurvey Repository", () => {
       data: {
         title: "Test Survey Title",
         description: "test survey description",
-        expiresAt: globalDate
+        expiresAt: globalDate,
+        accountId: "test-account-id",
       },
 
       select: {
@@ -176,6 +181,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -226,6 +232,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -266,6 +273,7 @@ describe("Prisma AddSurvey Repository", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
