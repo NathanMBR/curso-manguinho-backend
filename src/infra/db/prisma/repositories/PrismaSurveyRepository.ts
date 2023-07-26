@@ -7,7 +7,8 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
       title,
       description,
       expiresAt,
-      questions
+      questions,
+      accountId
     } = request;
 
     const survey = await prisma.$transaction(
@@ -17,7 +18,8 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
             data: {
               title,
               description,
-              expiresAt
+              expiresAt,
+              accountId
             },
 
             select: {
