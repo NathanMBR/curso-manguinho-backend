@@ -1,19 +1,19 @@
 import {
   Controller,
   Validator
-} from "../protocols";
+} from "../../protocols";
 import {
   FindOneAccountByEmail,
   CompareAccountPassword,
   AuthenticateAccount
-} from "../../domain/usecases";
+} from "../../../domain/usecases";
 import {
   ValidationError,
   NotFoundError,
   InvalidPasswordError
-} from "../errors";
-import { HttpResponseHelper } from "../helpers";
-import { LogInRequest } from "../models";
+} from "../../errors";
+import { HttpResponseHelper } from "../../helpers";
+import { LogInRequest } from "../../models";
 
 export class LogInController implements Controller.Protocol {
   constructor(

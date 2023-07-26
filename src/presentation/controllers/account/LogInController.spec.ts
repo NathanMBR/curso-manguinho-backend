@@ -9,16 +9,15 @@ import {
   ValidationError,
   NotFoundError,
   InvalidPasswordError
-} from "../errors";
-import { Validator } from "../protocols";
+} from "../../errors";
 import {
   FindOneAccountByEmail,
   CompareAccountPassword,
   AuthenticateAccount
-} from "../../domain/usecases";
-
+} from "../../../domain/usecases";
+import { Validator } from "../../protocols";
+import { LogInRequest } from "../../models";
 import { LogInController } from "./LogInController";
-import { LogInRequest } from "../models";
 
 interface GetSUTEnvironmentReturn {
   validator: Validator.Protocol<LogInRequest>;

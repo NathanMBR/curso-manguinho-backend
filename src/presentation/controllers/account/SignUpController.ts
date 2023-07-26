@@ -1,17 +1,17 @@
 import {
   Controller,
   Validator
-} from "../protocols";
+} from "../../protocols";
 import {
   FindOneAccountByEmail,
   AddAccount
-} from "../../domain/usecases";
+} from "../../../domain/usecases";
 import {
   EmailAlreadyExistsError,
   ValidationError
-} from "../errors";
-import { SignUpRequest } from "../models";
-import { HttpResponseHelper } from "../helpers";
+} from "../../errors";
+import { SignUpRequest } from "../../models";
+import { HttpResponseHelper } from "../../helpers";
 
 export class SignUpController implements Controller.Protocol {
   constructor(

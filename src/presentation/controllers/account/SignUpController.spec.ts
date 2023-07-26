@@ -8,13 +8,13 @@ import {
 import {
   ValidationError,
   EmailAlreadyExistsError
-} from "../errors";
+} from "../../errors";
 import {
   FindOneAccountByEmail,
   AddAccount
-} from "../../domain/usecases";
-import { Validator } from "../protocols";
-import { SignUpRequest } from "../models";
+} from "../../../domain/usecases";
+import { Validator } from "../../protocols";
+import { SignUpRequest } from "../../models";
 
 import { SignUpController } from "./SignUpController";
 
