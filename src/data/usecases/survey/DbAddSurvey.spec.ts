@@ -23,6 +23,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
         id: "test-survey-id",
         title: "Test Survey Title",
         description: "test survey description",
+        accountId: "test-account-id",
         questions: [
           {
             id: "test-question-id",
@@ -66,6 +67,7 @@ describe("DbAddSurvey UseCase", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -89,6 +91,7 @@ describe("DbAddSurvey UseCase", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           id: "test-question-id",
@@ -119,6 +122,7 @@ describe("DbAddSurvey UseCase", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
@@ -152,6 +156,7 @@ describe("DbAddSurvey UseCase", () => {
       title: "Test Survey Title",
       description: "test survey description",
       expiresAt: globalDate,
+      accountId: "test-account-id",
       questions: [
         {
           title: "Test Question Title",
