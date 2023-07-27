@@ -1,17 +1,10 @@
-export namespace Controller {
-  export class HttpResponse {
-    constructor(
-      public readonly statusCode: number,
-      public readonly body: any
-    ) {}
-  }
+import {
+  HttpRequest,
+  HttpResponse
+} from "../models";
 
-  export interface Request {
-    body?: any;
-    authenticationData?: {
-      id: string;
-    };
-  }
+export namespace Controller {
+  export type Request = HttpRequest;
 
   export type Response = Promise<HttpResponse>;
 
