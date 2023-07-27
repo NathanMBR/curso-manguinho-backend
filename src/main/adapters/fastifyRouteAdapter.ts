@@ -1,15 +1,35 @@
-import { FastifyRequest, FastifyReply } from "fastify";
+import {
+  FastifyRequest,
+  FastifyReply
+} from "fastify";
 
-import { Controller } from "../../presentation/protocols";
+import {
+  Controller,
+  Middleware
+} from "../../presentation/protocols";
 
-export const fastifyRouteAdapter = (controller: Controller.Protocol) => {
+export const fastifyRouteAdapter = (
+  controller: Controller.Protocol,
+  ...middlewares: Array<Middleware.Protocol>
+) => {
   const fastifyRoute = async (
     request: FastifyRequest,
     response: FastifyReply
   ): Promise<FastifyReply> => {
-    const httpRequest: Controller.Request = {
+    let httpRequest: Controller.Request = {
       body: request.body
     };
+
+    for (const middleware of middlewares) {
+      const middlewareResponse = await middleware.handle(httpRequest);
+
+      if (!middlewareResponse.success)
+        return response
+          .status(middlewareResponse.httpResponse.statusCode)
+          .send(middlewareResponse.httpResponse.body);
+
+      httpRequest = middlewareResponse.httpRequest;
+    }
 
     const { statusCode, body } = await controller.handle(httpRequest);
 
