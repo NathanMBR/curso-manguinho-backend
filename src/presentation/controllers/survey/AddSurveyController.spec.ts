@@ -114,6 +114,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
@@ -181,6 +182,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
@@ -225,6 +227,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       // authenticationData: {
       //   id: "test-account-id",
+      //   type: "COMMON" as const
       // },
 
       body: {
@@ -262,6 +265,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
@@ -300,6 +304,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
@@ -361,6 +366,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
@@ -403,6 +409,7 @@ describe("AddSurvey Controller", () => {
     const SUTRequest = {
       authenticationData: {
         id: "test-account-id",
+        type: "COMMON" as const
       },
 
       body: {
