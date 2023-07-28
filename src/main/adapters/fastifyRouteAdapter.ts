@@ -17,6 +17,9 @@ export const fastifyRouteAdapter = (
     response: FastifyReply
   ): Promise<FastifyReply> => {
     let httpRequest: Controller.Request = {
+      headers: {
+        authorization: request.headers.authorization
+      },
       body: request.body
     };
 
