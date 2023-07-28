@@ -6,3 +6,4 @@ export * from "./InvalidPasswordError";
 export * from "./RequiredAuthenticationError";
 export * from "./MissingAuthenticationError";
 export * from "./InvalidAuthenticationError";
+export * from "./PermissionDeniedError";
