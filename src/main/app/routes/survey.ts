@@ -5,7 +5,11 @@ import {
   HookHandlerDoneFunction
 } from "fastify";
 
-import { makeAddSurveyController } from "../../factories";
+import {
+  makeAddSurveyController,
+  makeAuthenticationMiddleware,
+  makeAdminMiddleware
+} from "../../factories";
 import { fastifyRouteAdapter } from "../../adapters";
 
 export const surveyRoutes = (
@@ -15,7 +19,14 @@ export const surveyRoutes = (
 ) => {
   const addSurveyController = makeAddSurveyController();
 
-  const addSurveyRoute = fastifyRouteAdapter(addSurveyController);
+  const authenticationMiddleware = makeAuthenticationMiddleware();
+  const adminMiddleware = makeAdminMiddleware();
+
+  const addSurveyRoute = fastifyRouteAdapter(
+    addSurveyController,
+    authenticationMiddleware,
+    adminMiddleware
+  );
 
   app.post("/", addSurveyRoute);
 
