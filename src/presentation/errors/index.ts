@@ -4,3 +4,4 @@ export * from "./ValidationError";
 export * from "./NotFoundError";
 export * from "./InvalidPasswordError";
 export * from "./RequiredAuthenticationError";
+export * from "./MissingAuthenticationError";
