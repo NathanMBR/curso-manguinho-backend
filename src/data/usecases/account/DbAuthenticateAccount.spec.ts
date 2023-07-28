@@ -67,15 +67,16 @@ describe("DbAuthenticateAccount UseCase", () => {
 
     SUT.authenticate(SUTRequest);
 
-    const expectedToBeCalledWith = {
+    const expectedCall = {
       id: SUTRequest.id,
       data: {
         name: SUTRequest.name,
-        email: SUTRequest.email
+        email: SUTRequest.email,
+        type: SUTRequest.type
       }
     };
 
-    expect(signSpy).toBeCalledWith(expectedToBeCalledWith);
+    expect(signSpy).toBeCalledWith(expectedCall);
   });
 
   it("should not pass password to token signer call", () => {
@@ -93,16 +94,17 @@ describe("DbAuthenticateAccount UseCase", () => {
 
     SUT.authenticate(SUTRequest);
 
-    const expectedToBeCalledWith = {
+    const unexpectedCall = {
       id: SUTRequest.id,
       data: {
         name: SUTRequest.name,
         email: SUTRequest.email,
-        password: SUTRequest.password
+        password: SUTRequest.password,
+        type: SUTRequest.type
       }
     };
 
-    expect(signSpy).not.toBeCalledWith(expectedToBeCalledWith);
+    expect(signSpy).not.toBeCalledWith(unexpectedCall);
   });
 
   it("should repass sign errors to upper level", async () => {
