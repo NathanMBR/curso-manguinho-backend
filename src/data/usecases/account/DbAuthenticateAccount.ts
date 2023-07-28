@@ -10,7 +10,8 @@ export class DbAuthenticateAccount implements AuthenticateAccount.Protocol {
     const {
       id,
       name,
-      email
+      email,
+      type
     } = request;
 
     const token = this.tokenSigner.sign(
@@ -18,7 +19,8 @@ export class DbAuthenticateAccount implements AuthenticateAccount.Protocol {
         id,
         data: {
           name,
-          email
+          email,
+          type
         }
       }
     );
