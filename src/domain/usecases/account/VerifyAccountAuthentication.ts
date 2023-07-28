@@ -1,5 +1,7 @@
 export namespace VerifyAccountAuthentication {
-  export type Request = string;
+  export type Request = {
+    token: string;
+  };
 
   export type Response = {
     isAuthenticationValid: true;
