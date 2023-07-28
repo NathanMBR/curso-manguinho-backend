@@ -21,6 +21,10 @@ export abstract class HttpResponseHelper {
     return new HttpResponse(401, error);
   }
 
+  public static forbidden(error: Error): HttpResponse {
+    return new HttpResponse(403, error);
+  }
+
   public static notFound(error: Error): HttpResponse {
     return new HttpResponse(404, error);
   }
