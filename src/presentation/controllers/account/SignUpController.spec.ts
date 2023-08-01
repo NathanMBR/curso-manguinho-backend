@@ -100,7 +100,7 @@ describe("SignUp Controller", () => {
       type: "COMMON"
     };
 
-    expect(SUTResponse.statusCode).toBe(200);
+    expect(SUTResponse.statusCode).toBe(201);
     expect(SUTResponse.body).toEqual(expectedResponse);
   });
 
