@@ -60,6 +60,6 @@ export class SignUpController implements Controller.Protocol {
       type: account.type
     };
 
-    return HttpResponseHelper.ok(sanitizedAccount);
+    return HttpResponseHelper.created(sanitizedAccount);
   }
 }
