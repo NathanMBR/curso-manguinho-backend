@@ -16,7 +16,7 @@ interface GetSUTEnvironmentResponse {
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class HashComparerStub implements HashComparer.Protocol {
-    async compare(request: HashComparer.Request): HashComparer.Response {
+    async compare(_request: HashComparer.Request): HashComparer.Response {
       return Promise.resolve(true);
     }
   }

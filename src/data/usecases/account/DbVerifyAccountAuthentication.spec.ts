@@ -16,7 +16,7 @@ interface GetSUTEnvironmentResponse {
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class TokenVerifierStub implements TokenVerifier.Protocol {
-    verify(request: TokenVerifier.Request): TokenVerifier.Response {
+    verify(_request: TokenVerifier.Request): TokenVerifier.Response {
       return {
         isValid: true,
         tokenData: {

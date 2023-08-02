@@ -1,8 +1,7 @@
 import {
   describe,
   it,
-  expect,
-  jest
+  expect
 } from "@jest/globals";
 
 import { calculateRepositoryPaginationParameters } from "./calculateRepositoryPaginationParameters";
