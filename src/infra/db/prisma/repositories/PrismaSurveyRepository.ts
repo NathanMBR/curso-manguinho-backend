@@ -1,7 +1,13 @@
-import { AddSurveyRepository } from "../../../../data/protocols";
+import {
+  AddSurveyRepository,
+  FindManySurveysRepository
+} from "../../../../data/protocols";
 import { prisma } from "../prisma";
 
-export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
+export class PrismaSurveyRepository implements
+  AddSurveyRepository.Protocol,
+  FindManySurveysRepository.Protocol
+{
   async add(request: AddSurveyRepository.Request): AddSurveyRepository.Response {
     const {
       title,
@@ -78,5 +84,21 @@ export class PrismaSurveyRepository implements AddSurveyRepository.Protocol {
     );
 
     return survey;
+  }
+
+  async findMany(request: FindManySurveysRepository.Request): FindManySurveysRepository.Response {
+    const {
+      skip,
+      take
+    } = request;
+
+    const surveys = await prisma.survey.findMany(
+      {
+        skip,
+        take
+      }
+    );
+
+    return surveys;
   }
 }
