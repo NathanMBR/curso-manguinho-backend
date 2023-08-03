@@ -54,9 +54,32 @@ const getStubSurvey: () => Promise<any> = async () => {
   );
 };
 
+
+
 const createQuestionMock = jest.fn(getStubQuestion);
 const createSurveyMock = jest.fn(getStubSurvey);
 const findUniqueSurveyMock = jest.fn(getStubSurvey);
+const findManySurveysMock = jest.fn(
+  async () => {
+    const surveys = await Promise.all(
+      new Array(5).fill(
+        getStubSurvey()
+      )
+    );
+
+    return surveys.map(
+      survey => {
+        return {
+          id: survey.id,
+          title: survey.title,
+          description: survey.description,
+          accountId: survey.accountId,
+          expiresAt: survey.expiresAt
+        }
+      }
+    );
+  }
+);
 
 const mockTransaction = {
   question: {
@@ -65,7 +88,8 @@ const mockTransaction = {
 
   survey: {
     create: createSurveyMock,
-    findUnique: findUniqueSurveyMock
+    findUnique: findUniqueSurveyMock,
+    findMany: findManySurveysMock
   }
 } as any;
 
@@ -79,6 +103,8 @@ jest.spyOn(prisma, "$transaction").mockImplementation(
     return stubSurvey;
   }
 );
+
+jest.spyOn(prisma.survey, "findMany").mockImplementation(findManySurveysMock as any);
 
 describe("Prisma AddSurvey Repository", () => {
   it("should successfully add a survey", async () => {
@@ -327,6 +353,62 @@ describe("Prisma AddSurvey Repository", () => {
     );
 
     const SUTResponse = SUT.add(SUTRequest);
+    await expect(SUTResponse).rejects.toThrow();
+  });
+});
+
+describe("Prisma FindManySurveys Repository", () => {
+  it("should successfully find many surveys", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      take: 10,
+      skip: 0
+    };
+
+    const SUTResponse = await SUT.findMany(SUTRequest);
+
+    const expectedResponse = new Array(5).fill(
+      {
+        id: "test-survey-id",
+        title: "Test Survey Title",
+        description: "test survey description",
+        accountId: "test-account-id",
+        expiresAt: globalDate
+      }
+    );
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should pass take and skip data to prisma survey find many call", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      take: 10,
+      skip: 0
+    };
+
+    await SUT.findMany(SUTRequest);
+
+    expect(findManySurveysMock).toHaveBeenCalledWith(SUTRequest);
+  });
+
+  it("should repass prisma errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      take: 10,
+      skip: 0
+    };
+
+    jest.spyOn(prisma.survey, "findMany").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.findMany(SUTRequest);
     await expect(SUTResponse).rejects.toThrow();
   });
 });
