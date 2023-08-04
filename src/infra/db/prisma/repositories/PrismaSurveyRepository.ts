@@ -1,12 +1,14 @@
 import {
   AddSurveyRepository,
-  FindManySurveysRepository
+  FindManySurveysRepository,
+  CountManySurveysRepository
 } from "../../../../data/protocols";
 import { prisma } from "../prisma";
 
 export class PrismaSurveyRepository implements
   AddSurveyRepository.Protocol,
-  FindManySurveysRepository.Protocol
+  FindManySurveysRepository.Protocol,
+  CountManySurveysRepository.Protocol
 {
   async add(request: AddSurveyRepository.Request): AddSurveyRepository.Response {
     const {
@@ -100,5 +102,11 @@ export class PrismaSurveyRepository implements
     );
 
     return surveys;
+  }
+
+  async countMany(_request: CountManySurveysRepository.Request): CountManySurveysRepository.Response {
+    const count = await prisma.survey.count();
+
+    return count;
   }
 }
