@@ -8,7 +8,7 @@ import {
 import { FastifyInstance } from "fastify";
 import supertest from "supertest";
 
-import { prisma } from "../../infra/db";
+// import { prisma } from "../../infra/db";
 import { createApp } from "./createApp";
 
 describe("CORS Test", () => {
@@ -16,7 +16,7 @@ describe("CORS Test", () => {
   let request: supertest.SuperTest<supertest.Test>;
 
   beforeAll(async () => {
-    await prisma.$connect();
+    // await prisma.$connect();
 
     app = await createApp();
     request = supertest(app.server);
@@ -29,7 +29,7 @@ describe("CORS Test", () => {
   afterAll(async () => {
     await app.close();
 
-    await prisma.$disconnect();
+    // await prisma.$disconnect();
   });
 
   it("should enable access from any origin", async () => {
