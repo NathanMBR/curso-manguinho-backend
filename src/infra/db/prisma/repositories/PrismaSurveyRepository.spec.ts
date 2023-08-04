@@ -80,6 +80,7 @@ const findManySurveysMock = jest.fn(
     );
   }
 );
+const countManySurveysMock = jest.fn(async () => Promise.resolve(5));
 
 const mockTransaction = {
   question: {
@@ -89,7 +90,8 @@ const mockTransaction = {
   survey: {
     create: createSurveyMock,
     findUnique: findUniqueSurveyMock,
-    findMany: findManySurveysMock
+    findMany: findManySurveysMock,
+    count: countManySurveysMock
   }
 } as any;
 
@@ -105,6 +107,8 @@ jest.spyOn(prisma, "$transaction").mockImplementation(
 );
 
 jest.spyOn(prisma.survey, "findMany").mockImplementation(findManySurveysMock as any);
+jest.spyOn(prisma.survey, "count").mockImplementation(countManySurveysMock as any);
+
 
 describe("Prisma AddSurvey Repository", () => {
   it("should successfully add a survey", async () => {
@@ -409,6 +413,41 @@ describe("Prisma FindManySurveys Repository", () => {
     );
 
     const SUTResponse = SUT.findMany(SUTRequest);
+    await expect(SUTResponse).rejects.toThrow();
+  });
+});
+
+describe("Prisma CountManySurveys Repository", () => {
+  it("should successfully count many surveys", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      take: 10,
+      skip: 0
+    };
+
+    const SUTResponse = await SUT.countMany(SUTRequest);
+
+    const expectedResponse = 5;
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should repass prisma errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      take: 10,
+      skip: 0
+    };
+
+    jest.spyOn(prisma.survey, "count").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.countMany(SUTRequest);
     await expect(SUTResponse).rejects.toThrow();
   });
 });
