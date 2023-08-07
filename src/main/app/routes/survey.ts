@@ -7,6 +7,7 @@ import {
 
 import {
   makeAddSurveyController,
+  makeFindManySurveysController,
   makeAuthenticationMiddleware,
   makeAdminMiddleware
 } from "../../factories";
@@ -18,6 +19,7 @@ export const surveyRoutes = (
   done: HookHandlerDoneFunction
 ) => {
   const addSurveyController = makeAddSurveyController();
+  const findManySurveysController = makeFindManySurveysController();
 
   const authenticationMiddleware = makeAuthenticationMiddleware();
   const adminMiddleware = makeAdminMiddleware();
@@ -28,7 +30,13 @@ export const surveyRoutes = (
     adminMiddleware
   );
 
+  const findManySurveysRoute = fastifyRouteAdapter(
+    findManySurveysController,
+    authenticationMiddleware
+  );
+
   app.post("/", addSurveyRoute);
+  app.get("/", findManySurveysRoute);
 
   return done();
 };
