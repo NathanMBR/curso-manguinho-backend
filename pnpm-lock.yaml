@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  semver@>=6.0.0 <6.3.1: '>=6.3.1'
+
 dependencies:
   '@fastify/cors':
     specifier: ^8.3.0
