@@ -9,7 +9,7 @@
     "start": "node .",
     "start:dev": "node -r dotenv/config .",
     "test": "jest --passWithNoTests --coverage",
-    "test:unit": "jest --passWithNoTests --runInBand --testMatch **/*.spec.ts",
+    "test:unit": "jest --passWithNoTests --testMatch **/*.spec.ts",
     "test:integration": "jest --passWithNoTests --testMatch **/*.test.ts",
     "test:ci": "jest --passWithNoTests --verbose"
   },
