@@ -1,4 +1,4 @@
-name: Test workflow
+name: Lint and Test Workflow
 on:
   push:
     branches:
@@ -10,7 +10,7 @@ on:
       - development
 jobs:
   publish:
-    name: Testing
+    name: Linting and testing
     runs-on: ubuntu-latest
     container: node:18.16.0-alpine3.18
     services:
