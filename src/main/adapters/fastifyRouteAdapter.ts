@@ -20,7 +20,8 @@ export const fastifyRouteAdapter = (
       headers: {
         authorization: request.headers.authorization
       },
-      body: request.body
+      query: request.query,
+      body: request.body,
     };
 
     for (const middleware of middlewares) {
