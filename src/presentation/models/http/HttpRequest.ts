@@ -3,6 +3,8 @@ export interface HttpRequest {
     authorization?: string;
   };
   body?: any;
+  query?: any;
+  
   authenticationData?: {
     id: string;
     type: "COMMON" | "ADMIN";
