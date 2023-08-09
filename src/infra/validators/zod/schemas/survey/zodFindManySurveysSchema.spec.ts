@@ -38,6 +38,21 @@ describe("ZodFindManySurveys Schema", () => {
     expect(SUTResponse.success).toBe(true);
   });
 
+  it("should coerce strings into numbers", () => {
+    const { SUT } = getSUTEnvironment();
+
+    type SUTSuccess =  SafeParseSuccess<zod.output<typeof SUT>>;
+
+    const SUTRequest = {
+      page: "1",
+      quantity: "50"
+    };
+
+    const SUTResponse = SUT.safeParse(SUTRequest) as SUTSuccess;
+
+    expect(SUTResponse.success).toBe(true);
+  });
+
   it("should return an error if page isn't defined", () => {
     const { SUT } = getSUTEnvironment();
 
@@ -52,7 +67,7 @@ describe("ZodFindManySurveys Schema", () => {
     const issue = SUTResponse.error.issues[0] as ZodIssue;
 
     expect(SUTResponse.success).toBe(false);
-    expect(issue.message).toBe("The surveys page is required");
+    expect(issue.message).toBe("The surveys page must be a number");
   });
 
   it("should return an error if page isn't a number", () => {
@@ -120,7 +135,7 @@ describe("ZodFindManySurveys Schema", () => {
     const issue = SUTResponse.error.issues[0] as ZodIssue;
 
     expect(SUTResponse.success).toBe(false);
-    expect(issue.message).toBe("The surveys quantity is required");
+    expect(issue.message).toBe("The surveys quantity must be a number");
   });
 
   it("should return an error if quantity isn't a number", () => {
@@ -186,7 +201,7 @@ describe("ZodFindManySurveys Schema", () => {
 
     const SUTResponse = SUT.safeParse(SUTRequest) as SUTFailure;
     const issue = SUTResponse.error.issues[0] as ZodIssue;
-    
+
     expect(SUTResponse.success).toBe(false);
     expect(issue.message).toBe("The surveys quantity must be an integer number");
   });
@@ -200,7 +215,7 @@ describe("ZodFindManySurveys Schema", () => {
 
     const SUTResponse = SUT.safeParse(SUTRequest) as SUTFailure;
     const issue = SUTResponse.error.issues[0] as ZodIssue;
-    
+
     expect(SUTResponse.success).toBe(false);
     expect(issue.message).toBe("The find many surveys payload is required");
   });
@@ -209,12 +224,12 @@ describe("ZodFindManySurveys Schema", () => {
     const { SUT } = getSUTEnvironment();
 
     type SUTFailure = SafeParseError<zod.output<typeof SUT>>;
-    
+
     const SUTRequest = ["test"];
 
     const SUTResponse = SUT.safeParse(SUTRequest) as SUTFailure;
     const issue = SUTResponse.error.issues[0] as ZodIssue;
-    
+
     expect(SUTResponse.success).toBe(false);
     expect(issue.message).toBe("The find many surveys payload must be an object");
   });
