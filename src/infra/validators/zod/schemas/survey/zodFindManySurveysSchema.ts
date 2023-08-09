@@ -3,6 +3,7 @@ import { z as zod } from "zod";
 export const zodFindManySurveysSchema = zod.object(
   {
     page: zod
+      .coerce
       .number(
         {
           description: "The surveys page",
@@ -14,6 +15,7 @@ export const zodFindManySurveysSchema = zod.object(
       .int("The surveys page must be an integer number"),
 
     quantity: zod
+      .coerce
       .number(
         {
           description: "The surveys quantity",
