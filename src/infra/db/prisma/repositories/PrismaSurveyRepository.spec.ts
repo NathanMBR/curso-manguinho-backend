@@ -108,7 +108,7 @@ jest.spyOn(prisma, "$transaction").mockImplementation(
 
 jest.spyOn(prisma.survey, "findMany").mockImplementation(findManySurveysMock as any);
 jest.spyOn(prisma.survey, "count").mockImplementation(countManySurveysMock as any);
-
+jest.spyOn(prisma.survey, "findUnique").mockImplementation(findUniqueSurveyMock as any);
 
 describe("Prisma AddSurvey Repository", () => {
   it("should successfully add a survey", async () => {
@@ -448,6 +448,87 @@ describe("Prisma CountManySurveys Repository", () => {
     );
 
     const SUTResponse = SUT.countMany(SUTRequest);
+    await expect(SUTResponse).rejects.toThrow();
+  });
+});
+
+describe("Prisma FindOneSurvey Repository", () => {
+  it("should successfully find a survey", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      id: "test-survey-id"
+    };
+
+    const SUTResponse = await SUT.findOne(SUTRequest);
+
+    const expectedResponse = {
+      id: "test-survey-id",
+      title: "Test Survey Title",
+      description: "test survey description",
+      accountId: "test-account-id",
+      questions: [
+        {
+          id: "test-question-id",
+          title: "Test Question Title",
+          description: "test question description",
+          type: "SINGLE",
+          answers: [
+            {
+              id: "test-answer-id",
+              body: "test answer body"
+            }
+          ]
+        }
+      ],
+      expiresAt: globalDate
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should pass search data to prisma survey find unique call", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const findUniqueSpy = jest.spyOn(prisma.survey, "findUnique");
+
+    const SUTRequest = {
+      id: "test-survey-id"
+    };
+
+    await SUT.findOne(SUTRequest);
+
+    const expectedCall = {
+      where: {
+        id: "test-survey-id"
+      },
+
+      include: {
+        questions: {
+          include: {
+            answers: true
+          }
+        }
+      }
+    };
+
+    expect(findUniqueSpy).toHaveBeenCalledWith(expectedCall);
+  });
+
+  it("should repass prisma survey find unique errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      id: "test-survey-id"
+    };
+
+    jest.spyOn(prisma.survey, "findUnique").mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTResponse = SUT.findOne(SUTRequest);
     await expect(SUTResponse).rejects.toThrow();
   });
 });
