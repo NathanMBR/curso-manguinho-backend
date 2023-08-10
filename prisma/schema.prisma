@@ -28,6 +28,7 @@ model Account {
   type AccountType @default(COMMON)
 
   surveys Survey[]
+  userAnswers UserAnswer[]
 
   @@map("accounts")
 }
@@ -54,6 +55,7 @@ model Question {
 
   survey Survey @relation(fields: [surveyId], references: [id])
   answers Answer[]
+  userAnswers UserAnswer[]
 
   @@map("questions")
 }
@@ -64,6 +66,21 @@ model Answer {
   questionId String @db.VarChar()
 
   question Question @relation(fields: [questionId], references: [id])
+  userAnswers UserAnswer[]
 
   @@map("answers")
+}
+
+model UserAnswer {
+  id String @id @default(uuid())
+
+  accountId String @db.VarChar()
+  questionId String @db.VarChar()
+  answerId String @db.VarChar()
+
+  account Account @relation(fields: [accountId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+  answer Answer @relation(fields: [answerId], references: [id])
+
+  @@map("user_answers")
 }
