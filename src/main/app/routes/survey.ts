@@ -8,6 +8,8 @@ import {
 import {
   makeAddSurveyController,
   makeFindManySurveysController,
+  makeFindOneSurveyController,
+
   makeAuthenticationMiddleware,
   makeAdminMiddleware
 } from "../../factories";
@@ -20,6 +22,7 @@ export const surveyRoutes = (
 ) => {
   const addSurveyController = makeAddSurveyController();
   const findManySurveysController = makeFindManySurveysController();
+  const findOneSurveyController = makeFindOneSurveyController();
 
   const authenticationMiddleware = makeAuthenticationMiddleware();
   const adminMiddleware = makeAdminMiddleware();
@@ -35,8 +38,14 @@ export const surveyRoutes = (
     authenticationMiddleware
   );
 
+  const findOneSurveyRoute = fastifyRouteAdapter(
+    findOneSurveyController,
+    authenticationMiddleware
+  );
+
   app.post("/", addSurveyRoute);
   app.get("/", findManySurveysRoute);
+  app.get("/:id", findOneSurveyRoute);
 
   return done();
 };
