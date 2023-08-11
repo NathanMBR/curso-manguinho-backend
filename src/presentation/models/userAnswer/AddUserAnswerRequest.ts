@@ -1,4 +1,4 @@
 export interface AddUserAnswerRequest {
-  surveyId: string;
+  questionId: string;
   answerId: string;
 }
