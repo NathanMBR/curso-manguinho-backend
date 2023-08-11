@@ -22,6 +22,7 @@ export const fastifyRouteAdapter = (
       },
       query: request.query,
       body: request.body,
+      params: request.params
     };
 
     for (const middleware of middlewares) {
