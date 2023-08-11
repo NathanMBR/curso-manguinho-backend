@@ -17,14 +17,7 @@ interface GetSUTEnvironmentResponse {
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class AddUserAnswerRepositoryStub implements AddUserAnswerRepository.Protocol {
     async add(_request: AddUserAnswerRepository.Request): AddUserAnswerRepository.Response {
-      return Promise.resolve(
-        {
-          id: "test-user-answer-id",
-          accountId: "test-account-id",
-          questionId: "test-question-id",
-          answerId: "test-answer-id",
-        }
-      );
+      return Promise.resolve();
     }
   }
 
@@ -47,18 +40,17 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     const SUTResponse = await SUT.add(SUTRequest);
 
-    const expectedResponse = {
-      id: "test-user-answer-id",
-      accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id",
-    };
+    const expectedResponse = undefined;
 
     expect(SUTResponse).toEqual(expectedResponse);
   });
@@ -70,8 +62,12 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     await SUT.add(SUTRequest);
@@ -92,8 +88,12 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     const SUTResponse = SUT.add(SUTRequest);

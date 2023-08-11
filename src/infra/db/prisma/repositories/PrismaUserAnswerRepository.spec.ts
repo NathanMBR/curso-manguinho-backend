@@ -20,16 +20,9 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   };
 };
 
-const returnUserAnswerFunction = (): any => Promise.resolve(
-  {
-    id: "test-user-answer-id",
-    accountId: "test-account-id",
-    questionId: "test-question-id",
-    answerId: "test-answer-id"
-  }
-);
+const createManyUserAnswersMock: any = async () => Promise.resolve(undefined);
 
-jest.spyOn(prisma.userAnswer, "create").mockImplementation(returnUserAnswerFunction);
+jest.spyOn(prisma.userAnswer, "createMany").mockImplementation(createManyUserAnswersMock);
 
 describe("Prisma AddUserAnswer Repository", () => {
   it("should successfully add an user answer", async () => {
@@ -37,18 +30,17 @@ describe("Prisma AddUserAnswer Repository", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     const SUTResponse = await SUT.add(SUTRequest);
 
-    const expectedResponse = {
-      id: "test-user-answer-id",
-      accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
-    };
+    const expectedResponse = undefined;
 
     expect(SUTResponse).toEqual(expectedResponse);
   });
@@ -56,36 +48,29 @@ describe("Prisma AddUserAnswer Repository", () => {
   it("should pass user answer data to prisma", async () => {
     const { SUT } = getSUTEnvironment();
 
-    const createSpy = jest.spyOn(prisma.userAnswer, "create");
+    const createSpy = jest.spyOn(prisma.userAnswer, "createMany");
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     await SUT.add(SUTRequest);
 
     const expectedCall = {
-      data: {
-        account: {
-          connect: {
-            id: SUTRequest.accountId
+      data: SUTRequest.userAnswers.map(
+        userAnswer => (
+          {
+            accountId: SUTRequest.accountId,
+            ...userAnswer
           }
-        },
-
-        question: {
-          connect: {
-            id: SUTRequest.questionId
-          }
-        },
-
-        answer: {
-          connect: {
-            id: SUTRequest.answerId
-          }
-        }
-      }
+        )
+      )
     };
 
     expect(createSpy).toHaveBeenCalledWith(expectedCall);
@@ -94,7 +79,7 @@ describe("Prisma AddUserAnswer Repository", () => {
   it("should repass prisma errors to upper level", async () => {
     const { SUT } = getSUTEnvironment();
 
-    jest.spyOn(prisma.userAnswer, "create").mockImplementationOnce(
+    jest.spyOn(prisma.userAnswer, "createMany").mockImplementationOnce(
       () => {
         throw new Error("Test error");
       }
@@ -102,8 +87,12 @@ describe("Prisma AddUserAnswer Repository", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
-      questionId: "test-question-id",
-      answerId: "test-answer-id"
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
     };
 
     const SUTResponse = SUT.add(SUTRequest);

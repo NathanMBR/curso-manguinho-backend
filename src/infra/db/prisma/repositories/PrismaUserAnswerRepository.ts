@@ -5,34 +5,22 @@ export class PrismaUserAnswerRepository implements AddUserAnswerRepository.Proto
   async add(request: AddUserAnswerRepository.Request): AddUserAnswerRepository.Response {
     const {
       accountId,
-      questionId,
-      answerId
+      userAnswers
     } = request;
 
-    const userAnswer = await prisma.userAnswer.create(
+    await prisma.userAnswer.createMany(
       {
-        data: {
-          account: {
-            connect: {
-              id: accountId
-            }
-          },
-
-          question: {
-            connect: {
-              id: questionId
-            }
-          },
-
-          answer: {
-            connect: {
-              id: answerId
+        data: userAnswers.map(
+          userAnswer => {
+            return {
+              accountId,
+              ...userAnswer
             }
           }
-        }
+        )
       }
     );
 
-    return userAnswer;
+    return;
   }
 }
