@@ -14,9 +14,14 @@ export namespace AddUserAnswer {
     success: true;
   };
 
+  export type FailureResponseErrorTypes = "EXPIRED_SURVEY" | "INVALID_PAYLOAD";
+
   type FailureResponse = {
     success: false;
-    errorMessage: string;
+    error: {
+      type: FailureResponseErrorTypes;
+      message: string;
+    }
   };
 
   type PossibleResponses = SuccessfulResponse | FailureResponse;
