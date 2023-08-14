@@ -6,6 +6,7 @@ import {
   RequiredAuthenticationError,
   ValidationError,
   NotFoundError,
+  SurveyAlreadyAnsweredError,
   ExpiredContentError
 } from "../../errors";
 import {
@@ -14,6 +15,7 @@ import {
 } from "../../models";
 import {
   FindOneSurvey,
+  FindOneUserAnsweredSurvey,
   AddUserAnswer
 } from "../../../domain/usecases";
 import { HttpResponseHelper } from "../../helpers";
@@ -23,6 +25,7 @@ export class AddSurveyAnswerController implements Controller.Protocol {
     private readonly findOneSurveyValidator: Validator.Protocol<FindOneSurveyRequest>,
     private readonly addUserAnswerValidator: Validator.Protocol<AddUserAnswerRequest>,
     private readonly findOneSurvey: FindOneSurvey.Protocol,
+    private readonly findOneUserAnsweredSurvey: FindOneUserAnsweredSurvey.Protocol,
     private readonly addUserAnswer: AddUserAnswer.Protocol
   ) {}
 
@@ -61,6 +64,18 @@ export class AddSurveyAnswerController implements Controller.Protocol {
     if (!survey)
       return HttpResponseHelper.notFound(
         new NotFoundError(`Survey with ID "${paramsValidation.data.id}" not found`)
+      );
+
+    const isSurveyAlreadyAnswered = await this.findOneUserAnsweredSurvey.findOne(
+      {
+        accountId: authenticationData.id,
+        surveyId: paramsValidation.data.id
+      }
+    );
+
+    if (isSurveyAlreadyAnswered)
+      return HttpResponseHelper.forbidden(
+        new SurveyAlreadyAnsweredError(paramsValidation.data.id)
       );
 
     const addUserAnswerResponse = await this.addUserAnswer.add(
