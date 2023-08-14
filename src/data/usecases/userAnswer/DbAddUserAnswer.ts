@@ -22,7 +22,10 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     if (!doesEveryQuestionBelongsToSurvey)
       return {
         success: false,
-        errorMessage: "Some of the questions don't belong to the survey"
+        error: {
+          type: "INVALID_PAYLOAD",
+          message: "Some of the questions don't belong to the survey"
+        }
       };
 
     const doesEveryAnswerBelongsToItsQuestion = userAnswers.every(
@@ -36,7 +39,10 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     if (!doesEveryAnswerBelongsToItsQuestion)
       return {
         success: false,
-        errorMessage: "Some of the answers don't belong to its question"
+        error: {
+          type: "INVALID_PAYLOAD",
+          message: "Some of the answers don't belong to its question"
+        }
       };
 
     const doesEveryQuestionHasAtLeastOneUserAnswer = survey.questions.every(
@@ -48,7 +54,10 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     if (!doesEveryQuestionHasAtLeastOneUserAnswer)
       return {
         success: false,
-        errorMessage: "Some of the questions doesn't have at least one user answer"
+        error: {
+          type: "INVALID_PAYLOAD",
+          message: "Some of the questions doesn't have at least one user answer"
+        }
       };
 
     const doesSomeSingleTypeQuestionHasMoreThanOneUserAnswer = survey.questions
@@ -69,7 +78,10 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     if (doesSomeSingleTypeQuestionHasMoreThanOneUserAnswer)
       return {
         success: false,
-        errorMessage: "Some of the single type questions has more than one user answer"
+        error: {
+          type: "INVALID_PAYLOAD",
+          message: "Some of the single type questions has more than one user answer"
+        }
       };
 
     const doesDuplicatedUserAnswerExists = userAnswers.some(
@@ -90,7 +102,10 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     if (doesDuplicatedUserAnswerExists)
       return {
         success: false,
-        errorMessage: "Duplicated user answer"
+        error: {
+          type: "INVALID_PAYLOAD",
+          message: "Duplicated user answer"
+        }
       };
 
     await this.addUserAnswerRepository.add(
