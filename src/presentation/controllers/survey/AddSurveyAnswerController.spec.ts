@@ -8,7 +8,8 @@ import {
 import {
   RequiredAuthenticationError,
   ValidationError,
-  NotFoundError
+  NotFoundError,
+  ExpiredContentError
 } from "../../errors";
 import {
   FindOneSurvey,
@@ -302,7 +303,50 @@ describe("AddSurveyAnswer Controller", () => {
     expect(SUTResponse).toEqual(expectedResponse);
   });
 
-  it("should return 400 if add user answer returns error", async () => {
+  it("should return 403 if add user answer returns expired survey error", async () => {
+    const { SUT, addUserAnswer } = getSUTEnvironment();
+
+    jest.spyOn(addUserAnswer, "add").mockReturnValueOnce(
+      Promise.resolve(
+        {
+          success: false,
+          error: {
+            type: "EXPIRED_SURVEY",
+            message: "Test error"
+          }
+        }
+      )
+    );
+
+    const SUTRequest = {
+      authenticationData: {
+        id: "test-account-id",
+        type: "COMMON" as const
+      },
+
+      params: {
+        id: "test-survey-id"
+      },
+
+      body: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    const SUTResponse = await SUT.handle(SUTRequest);
+
+    const expectedResponse = {
+      statusCode: 403,
+      body: new ExpiredContentError("Test error")
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should return 400 if add user answer returns invalid payload error", async () => {
     const { SUT, addUserAnswer } = getSUTEnvironment();
 
     jest.spyOn(addUserAnswer, "add").mockReturnValueOnce(
