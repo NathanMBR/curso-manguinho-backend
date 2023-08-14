@@ -8,3 +8,4 @@ export * from "./MissingAuthenticationError";
 export * from "./InvalidAuthenticationError";
 export * from "./PermissionDeniedError";
 export * from "./ExpiredContentError";
+export * from "./SurveyAlreadyAnsweredError";
