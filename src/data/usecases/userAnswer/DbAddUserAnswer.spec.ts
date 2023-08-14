@@ -14,6 +14,8 @@ interface GetSUTEnvironmentResponse {
   SUT: DbAddUserAnswer;
 }
 
+const globalDate = new Date();
+
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   class AddUserAnswerRepositoryStub implements AddUserAnswerRepository.Protocol {
     async add(_request: AddUserAnswerRepository.Request): AddUserAnswerRepository.Response {
@@ -81,6 +83,64 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: true
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should return error response if survey is expired", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const timeToSkipInMilliseconds = globalDate.getTime() + 10e3;
+    jest.spyOn(Date, "now").mockReturnValueOnce(timeToSkipInMilliseconds);
+
+    const SUTRequest = {
+      survey: {
+        id: "test-survey-id",
+        title: "Test Survey Title",
+        description: "test survey description",
+        accountId: "test-account-id",
+        expiresAt: globalDate,
+        questions: [
+          {
+            id: "test-question-id",
+            title: "Test Question Title",
+            description: "test question description",
+            surveyId: "test-survey-id",
+            type: "SINGLE" as const,
+            answers: [
+              {
+                id: "test-answer-id-1",
+                body: "test answer body 1",
+                questionId: "test-question-id"
+              },
+
+              {
+                id: "test-answer-id-2",
+                body: "test answer body 2",
+                questionId: "test-question-id"
+              }
+            ]
+          }
+        ]
+      },
+      accountId: "test-account-id",
+      userAnswers: [
+        {
+          questionId: "test-question-id-7",
+          answerId: "test-answer-id-1"
+        }
+      ]
+    };
+
+    const SUTResponse = await SUT.add(SUTRequest);
+
+    const expectedResponse = {
+      success: false,
+      error: {
+        type: "EXPIRED_SURVEY",
+        message: `Survey with ID "${SUTRequest.survey.id}" is expired`
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
