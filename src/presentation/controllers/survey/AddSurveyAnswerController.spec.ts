@@ -99,7 +99,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     async add(_data: AddUserAnswer.Request): AddUserAnswer.Response {
       return Promise.resolve(
         {
-          success: true as const
+          success: true
         }
       );
     }
@@ -308,8 +308,11 @@ describe("AddSurveyAnswer Controller", () => {
     jest.spyOn(addUserAnswer, "add").mockReturnValueOnce(
       Promise.resolve(
         {
-          success: false as const,
-          errorMessage: "Test error"
+          success: false,
+          error: {
+            type: "INVALID_PAYLOAD",
+            message: "Test error"
+          }
         }
       )
     );
