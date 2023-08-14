@@ -9,10 +9,12 @@ import {
   RequiredAuthenticationError,
   ValidationError,
   NotFoundError,
+  SurveyAlreadyAnsweredError,
   ExpiredContentError
 } from "../../errors";
 import {
   FindOneSurvey,
+  FindOneUserAnsweredSurvey,
   AddUserAnswer
 } from "../../../domain/usecases";
 import {
@@ -29,6 +31,7 @@ interface GetSUTEnvironmentReturn {
   addUserAnswerValidator: Validator.Protocol<AddUserAnswerRequest>;
 
   findOneSurvey: FindOneSurvey.Protocol;
+  findOneUserAnsweredSurvey: FindOneUserAnsweredSurvey.Protocol;
   addUserAnswer: AddUserAnswer.Protocol;
 
   SUT: AddSurveyAnswerController;
@@ -96,6 +99,12 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     }
   }
 
+  class FindOneUserAnsweredSurveyStub implements FindOneUserAnsweredSurvey.Protocol {
+    async findOne(_request: FindOneUserAnsweredSurvey.Request): FindOneUserAnsweredSurvey.Response {
+      return Promise.resolve(null);
+    }
+  }
+
   class AddUserAnswerStub implements AddUserAnswer.Protocol {
     async add(_data: AddUserAnswer.Request): AddUserAnswer.Response {
       return Promise.resolve(
@@ -109,12 +118,14 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
   const findOneSurveyValidator = new FindOneSurveyValidatorStub();
   const addUserAnswerValidator = new AddUserAnswerValidatorStub();
   const findOneSurvey = new FindOneSurveyStub();
+  const findOneUserAnsweredSurvey = new FindOneUserAnsweredSurveyStub();
   const addUserAnswer = new AddUserAnswerStub();
 
   const addSurveyAnswerController = new AddSurveyAnswerController(
     findOneSurveyValidator,
     addUserAnswerValidator,
     findOneSurvey,
+    findOneUserAnsweredSurvey,
     addUserAnswer
   );
 
@@ -123,6 +134,7 @@ const getSUTEnvironment = (): GetSUTEnvironmentReturn => {
     addUserAnswerValidator,
 
     findOneSurvey,
+    findOneUserAnsweredSurvey,
     addUserAnswer,
 
     SUT: addSurveyAnswerController
@@ -298,6 +310,47 @@ describe("AddSurveyAnswer Controller", () => {
     const expectedResponse = {
       statusCode: 404,
       body: new NotFoundError('Survey with ID "test-id" not found')
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should return 403 if find one user answered survey returns data", async () => {
+    const { SUT, findOneUserAnsweredSurvey } = getSUTEnvironment();
+
+    jest.spyOn(findOneUserAnsweredSurvey, "findOne").mockReturnValueOnce(
+      Promise.resolve(
+        {
+          id: "test-user-answered-survey-id",
+          accountId: "test-account-id",
+          surveyId: "test-survey-id",
+        }
+      )
+    );
+
+    const SUTRequest = {
+      authenticationData: {
+        id: "test-account-id",
+        type: "COMMON" as const
+      },
+
+      params: {
+        id: "test-survey-id"
+      },
+
+      body: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    const SUTResponse = await SUT.handle(SUTRequest);
+
+    const expectedResponse = {
+      statusCode: 403,
+      body: new SurveyAlreadyAnsweredError("test-id")
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
@@ -483,6 +536,39 @@ describe("AddSurveyAnswer Controller", () => {
     expect(findOneSpy).toHaveBeenCalledWith(expectedCall);
   });
 
+  it("should pass account and survey ids to find one user answered survey call", async () => {
+    const { SUT, findOneUserAnsweredSurvey } = getSUTEnvironment();
+
+    const findOneSpy = jest.spyOn(findOneUserAnsweredSurvey, "findOne");
+
+    const SUTRequest = {
+      authenticationData: {
+        id: "test-account-id",
+        type: "COMMON" as const
+      },
+
+      params: {
+        id: "test-survey-id"
+      },
+
+      body: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    await SUT.handle(SUTRequest);
+
+    const expectedCall = {
+      accountId: "test-account-id",
+      surveyId: "test-id"
+    };
+
+    expect(findOneSpy).toHaveBeenCalledWith(expectedCall);
+  });
+
   it("should pass body to add user answer call", async () => {
     const { SUT, addUserAnswer } = getSUTEnvironment();
 
@@ -618,6 +704,38 @@ describe("AddSurveyAnswer Controller", () => {
     const { SUT, findOneSurvey } = getSUTEnvironment();
 
     jest.spyOn(findOneSurvey, "findOne").mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTRequest = {
+      authenticationData: {
+        id: "test-account-id",
+        type: "COMMON" as const
+      },
+
+      params: {
+        id: "test-survey-id"
+      },
+
+      body: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    const SUTResponse = SUT.handle(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
+  });
+
+  it("should repass find one user answered survey errors to upper level", async () => {
+    const { SUT, findOneUserAnsweredSurvey } = getSUTEnvironment();
+
+    jest.spyOn(findOneUserAnsweredSurvey, "findOne").mockImplementationOnce(
       async () => {
         throw new Error("Test error");
       }
