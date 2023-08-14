@@ -132,7 +132,10 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: false,
-      errorMessage: "Some of the questions don't belong to the survey"
+      error: {
+        type: "INVALID_PAYLOAD",
+        message: "Some of the questions don't belong to the survey"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
@@ -210,7 +213,10 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: false,
-      errorMessage: "Some of the answers don't belong to its question"
+      error: {
+        type: "INVALID_PAYLOAD",
+        message: "Some of the answers don't belong to its question"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
@@ -283,7 +289,10 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: false,
-      errorMessage: "Some of the questions doesn't have at least one user answer"
+      error: {
+        type: "INVALID_PAYLOAD",
+        message: "Some of the questions doesn't have at least one user answer"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
@@ -340,7 +349,10 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: false,
-      errorMessage: "Some of the single type questions has more than one user answer"
+      error: {
+        type: "INVALID_PAYLOAD",
+        message: "Some of the single type questions has more than one user answer"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
@@ -397,7 +409,10 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedResponse = {
       success: false,
-      errorMessage: "Duplicated user answer"
+      error: {
+        type: "INVALID_PAYLOAD",
+        message: "Duplicated user answer"
+      }
     };
 
     expect(SUTResponse).toEqual(expectedResponse);
