@@ -13,6 +13,17 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
       userAnswers
     } = request;
 
+    const isSurveyExpired = survey.expiresAt && survey.expiresAt.getTime() <= Date.now();
+
+    if (isSurveyExpired)
+      return {
+        success: false,
+        error: {
+          type: "EXPIRED_SURVEY",
+          message: `Survey with ID "${survey.id}" is expired`
+        }
+      };
+
     const doesEveryQuestionBelongsToSurvey = userAnswers.every(
       userAnswer => survey.questions.some(
         question => question.id === userAnswer.questionId
