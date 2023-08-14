@@ -8,11 +8,13 @@ import {
 } from "../../../validation/adapters";
 import {
   PrismaSurveyRepository,
-  PrismaUserAnswerRepository
+  PrismaUserAnswerRepository,
+  PrismaUserAnsweredSurveyRepository
 } from "../../../infra/db";
 import {
   DbFindOneSurvey,
-  DbAddUserAnswer
+  DbAddUserAnswer,
+  DbFindOneUserAnsweredSurvey
 } from "../../../data/usecases";
 import { AddSurveyAnswerController } from "../../../presentation/controllers";
 import { PinoLoggerAdapter } from "../../../infra/log";
@@ -27,14 +29,17 @@ export const makeAddSurveyAnswerController = () => {
 
   const surveyRepository = new PrismaSurveyRepository();
   const userAnswerRepository = new PrismaUserAnswerRepository();
+  const userAnsweredSurveyRepository = new PrismaUserAnsweredSurveyRepository();
 
   const dbFindOneSurvey = new DbFindOneSurvey(surveyRepository);
   const dbAddUserAnswer = new DbAddUserAnswer(userAnswerRepository);
+  const dbFindOneUserAnsweredSurvey = new DbFindOneUserAnsweredSurvey(userAnsweredSurveyRepository);
 
   const addSurveyAnswerController = new AddSurveyAnswerController(
     findOneSurveyValidatorAdapter,
     addUserAnswerValidatorAdapter,
     dbFindOneSurvey,
+    dbFindOneUserAnsweredSurvey,
     dbAddUserAnswer
   );
 
