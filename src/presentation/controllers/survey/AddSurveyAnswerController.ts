@@ -5,7 +5,8 @@ import {
 import {
   RequiredAuthenticationError,
   ValidationError,
-  NotFoundError
+  NotFoundError,
+  ExpiredContentError
 } from "../../errors";
 import {
   FindOneSurveyRequest,
@@ -70,10 +71,25 @@ export class AddSurveyAnswerController implements Controller.Protocol {
       }
     );
 
-    if (!addUserAnswerResponse.success)
-      return HttpResponseHelper.badRequest(
-        new ValidationError(addUserAnswerResponse.errorMessage)
-      );
+    const addUserAnswerFailureResponsesMapper: Record<
+      AddUserAnswer.FailureResponseErrorTypes,
+      (message: string) => Awaited<Controller.Response>
+    > = {
+      EXPIRED_SURVEY: message => HttpResponseHelper.forbidden(
+        new ExpiredContentError(message)
+      ),
+
+      INVALID_PAYLOAD: message => HttpResponseHelper.badRequest(
+        new ValidationError(message)
+      )
+    };
+
+    if (!addUserAnswerResponse.success) {
+      const errorType = addUserAnswerResponse.error.type;
+      const getFailureResponse = addUserAnswerFailureResponsesMapper[errorType];
+
+      return getFailureResponse(addUserAnswerResponse.error.message);
+    }
 
     return HttpResponseHelper.noContent();
   }
