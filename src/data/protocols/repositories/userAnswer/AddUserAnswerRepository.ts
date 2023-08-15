@@ -3,6 +3,7 @@ import { RepositoryUserAnswer } from "../../../models";
 export namespace AddUserAnswerRepository {
   export type Request = {
     accountId: string;
+    surveyId: string;
     userAnswers: Array<Omit<RepositoryUserAnswer, "id" | "accountId">>;
   };
 
