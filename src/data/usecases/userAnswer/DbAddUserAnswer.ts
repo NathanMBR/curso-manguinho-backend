@@ -122,6 +122,7 @@ export class DbAddUserAnswer implements AddUserAnswer.Protocol {
     await this.addUserAnswerRepository.add(
       {
         accountId,
+        surveyId: survey.id,
         userAnswers
       }
     );
