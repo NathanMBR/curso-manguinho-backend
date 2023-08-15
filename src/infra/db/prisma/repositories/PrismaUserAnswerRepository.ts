@@ -5,19 +5,33 @@ export class PrismaUserAnswerRepository implements AddUserAnswerRepository.Proto
   async add(request: AddUserAnswerRepository.Request): AddUserAnswerRepository.Response {
     const {
       accountId,
+      surveyId,
       userAnswers
     } = request;
 
-    await prisma.userAnswer.createMany(
-      {
-        data: userAnswers.map(
-          userAnswer => {
-            return {
+    await prisma.$transaction(
+      async transaction => {
+        await transaction.userAnsweredSurvey.create(
+          {
+            data: {
               accountId,
-              ...userAnswer
+              surveyId
             }
           }
-        )
+        );
+
+        await transaction.userAnswer.createMany(
+          {
+            data: userAnswers.map(
+              userAnswer => {
+                return {
+                  accountId,
+                  ...userAnswer
+                }
+              }
+            )
+          }
+        );
       }
     );
 
