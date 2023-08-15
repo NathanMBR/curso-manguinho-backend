@@ -526,6 +526,7 @@ describe("DbAddUserAnswer UseCase", () => {
 
     const expectedCall = {
       accountId: SUTRequest.accountId,
+      surveyId: SUTRequest.survey.id,
       userAnswers: SUTRequest.userAnswers
     };
 
