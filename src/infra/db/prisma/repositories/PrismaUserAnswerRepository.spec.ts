@@ -1,5 +1,6 @@
 import {
   describe,
+  beforeEach,
   it,
   expect,
   jest
@@ -20,16 +21,41 @@ const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
   };
 };
 
-const createManyUserAnswersMock: any = async () => Promise.resolve(undefined);
+const createUserAnsweredSurveyStub: any = async () => Promise.resolve(null);
+const createManyUserAnswersStub: any = async () => Promise.resolve(null);
 
-jest.spyOn(prisma.userAnswer, "createMany").mockImplementation(createManyUserAnswersMock);
+const createUserAnsweredSurveyMock = jest.fn(createUserAnsweredSurveyStub);
+const createManyUserAnswersMock = jest.fn(createManyUserAnswersStub);
+
+const mockTransaction = {
+  userAnsweredSurvey: {
+    create: createUserAnsweredSurveyMock
+  },
+
+  userAnswer: {
+    createMany: createManyUserAnswersMock
+  }
+} as any;
+
+
 
 describe("Prisma AddUserAnswer Repository", () => {
+  beforeEach(() => {
+    jest.spyOn(prisma, "$transaction").mockImplementationOnce(
+      async callback => {
+        await callback(mockTransaction);
+
+        return;
+      }
+    );
+  });
+
   it("should successfully add an user answer", async () => {
     const { SUT } = getSUTEnvironment();
 
     const SUTRequest = {
       accountId: "test-account-id",
+      surveyId: "test-survey-id",
       userAnswers: [
         {
           questionId: "test-question-id",
@@ -45,13 +71,38 @@ describe("Prisma AddUserAnswer Repository", () => {
     expect(SUTResponse).toEqual(expectedResponse);
   });
 
-  it("should pass user answer data to prisma", async () => {
+  it("should pass account and survey ids to prisma create user answered survey call", async () => {
     const { SUT } = getSUTEnvironment();
-
-    const createSpy = jest.spyOn(prisma.userAnswer, "createMany");
 
     const SUTRequest = {
       accountId: "test-account-id",
+      surveyId: "test-survey-id",
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    await SUT.add(SUTRequest);
+
+    const expectedCall = {
+      data: {
+        accountId: SUTRequest.accountId,
+        surveyId: SUTRequest.surveyId
+      }
+    };
+
+    expect(createUserAnsweredSurveyMock).toHaveBeenCalledWith(expectedCall);
+  });
+
+  it("should pass user answer data to prisma create many user answers call", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      accountId: "test-account-id",
+      surveyId: "test-survey-id",
       userAnswers: [
         {
           questionId: "test-question-id",
@@ -73,13 +124,13 @@ describe("Prisma AddUserAnswer Repository", () => {
       )
     };
 
-    expect(createSpy).toHaveBeenCalledWith(expectedCall);
+    expect(createManyUserAnswersMock).toHaveBeenCalledWith(expectedCall);
   });
 
-  it("should repass prisma errors to upper level", async () => {
+  it("should repass user answer create many errors to upper level", async () => {
     const { SUT } = getSUTEnvironment();
 
-    jest.spyOn(prisma.userAnswer, "createMany").mockImplementationOnce(
+    createManyUserAnswersMock.mockImplementationOnce(
       () => {
         throw new Error("Test error");
       }
@@ -87,6 +138,61 @@ describe("Prisma AddUserAnswer Repository", () => {
 
     const SUTRequest = {
       accountId: "test-account-id",
+      surveyId: "test-survey-id",
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    const SUTResponse = SUT.add(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
+  });
+
+  it("should repass prisma user answered survey create errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    createUserAnsweredSurveyMock.mockImplementationOnce(
+      () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTRequest = {
+      accountId: "test-account-id",
+      surveyId: "test-survey-id",
+      userAnswers: [
+        {
+          questionId: "test-question-id",
+          answerId: "test-answer-id"
+        }
+      ]
+    };
+
+    const SUTResponse = SUT.add(SUTRequest);
+
+    await expect(SUTResponse).rejects.toThrow();
+  });
+
+  it("should repass prisma transaction errors to upper level", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const transactionSpy = jest.spyOn(prisma, "$transaction");
+
+    transactionSpy.mockReset();
+
+    transactionSpy.mockImplementationOnce(
+      async () => {
+        throw new Error("Test error");
+      }
+    );
+
+    const SUTRequest = {
+      accountId: "test-account-id",
+      surveyId: "test-survey-id",
       userAnswers: [
         {
           questionId: "test-question-id",
