@@ -10,6 +10,7 @@ import {
   makeFindManySurveysController,
   makeFindOneSurveyController,
   makeAddSurveyAnswerController,
+  makeGetSurveyResultController,
 
   makeAuthenticationMiddleware,
   makeAdminMiddleware
@@ -25,6 +26,7 @@ export const surveyRoutes = (
   const findManySurveysController = makeFindManySurveysController();
   const findOneSurveyController = makeFindOneSurveyController();
   const addSurveyAnswerController = makeAddSurveyAnswerController();
+  const getSurveyResultController = makeGetSurveyResultController();
 
   const authenticationMiddleware = makeAuthenticationMiddleware();
   const adminMiddleware = makeAdminMiddleware();
@@ -50,10 +52,17 @@ export const surveyRoutes = (
     authenticationMiddleware
   );
 
+  const getSurveyResultRoute = fastifyRouteAdapter(
+    getSurveyResultController,
+    authenticationMiddleware,
+    adminMiddleware
+  );
+
   app.post("/", addSurveyRoute);
   app.get("/", findManySurveysRoute);
   app.get("/:id", findOneSurveyRoute);
   app.post("/:id/answer", addSurveyAnswerRoute);
+  app.get("/:id/result", getSurveyResultRoute);
 
   return done();
 };
