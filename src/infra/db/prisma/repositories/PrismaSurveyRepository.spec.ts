@@ -2,7 +2,8 @@ import {
   describe,
   it,
   expect,
-  jest
+  jest,
+  beforeEach
 } from "@jest/globals";
 
 import { prisma } from "../prisma";
@@ -54,11 +55,101 @@ const getStubSurvey: () => Promise<any> = async () => {
   );
 };
 
+const getStubSurveyWithResult: () => Promise<any> = async () => Promise.resolve(
+  {
+    id: "test-survey-id",
+    title: "Test Survey Title",
+    description: "test survey description",
+    expiresAt: null,
+    accountId: "test-account-id-1",
+    questions: [
+      {
+        id: "test-question-id",
+        title: "Test Question Title",
+        description: "test question description",
+        type: "SINGLE",
+        surveyId: "test-survey-id",
+        answers: [
+          {
+            id: "test-answer-id-1",
+            body: "test answer body 1",
+            questionId: "test-question-id",
+            userAnswers: [
+              {
+                id: "test-user-answer-id-1",
+                accountId: "test-account-id-1",
+                questionId: "test-question-id",
+                answerId: "test-answer-id-1"
+              },
 
+              {
+                id: "test-user-answer-id-2",
+                accountId: "test-account-id-2",
+                questionId: "test-question-id",
+                answerId: "test-answer-id-1"
+              }
+            ]
+          },
+
+          {
+            id: "test-answer-id-2",
+            body: "test answer body 2",
+            questionId: "test-question-id",
+            userAnswers: [
+              {
+                id: "test-user-answer-id-3",
+                accountId: "test-account-id-3",
+                questionId: "test-question-id",
+                answerId: "test-answer-id-2"
+              },
+
+              {
+                id: "test-user-answer-id-4",
+                accountId: "test-account-id-4",
+                questionId: "test-question-id",
+                answerId: "test-answer-id-2"
+              },
+
+              {
+                id: "test-user-answer-id-5",
+                accountId: "test-account-id-5",
+                questionId: "test-question-id",
+                answerId: "test-answer-id-2"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    userAnsweredSurveys: [
+      {
+        id: "test-user-answer-id-1"
+      },
+
+      {
+        id: "test-user-answer-id-2"
+      },
+
+      {
+        id: "test-user-answer-id-3"
+      },
+
+      {
+        id: "test-user-answer-id-4"
+      },
+
+      {
+        id: "test-user-answer-id-5"
+      }
+    ]
+  }
+);
 
 const createQuestionMock = jest.fn(getStubQuestion);
 const createSurveyMock = jest.fn(getStubSurvey);
 const findUniqueSurveyMock = jest.fn(getStubSurvey);
+const findUniqueSurveyWithResultMock = jest.fn(getStubSurveyWithResult);
+const countManySurveysMock = jest.fn(async () => Promise.resolve(5));
 const findManySurveysMock = jest.fn(
   async () => {
     const surveys = await Promise.all(
@@ -80,7 +171,6 @@ const findManySurveysMock = jest.fn(
     );
   }
 );
-const countManySurveysMock = jest.fn(async () => Promise.resolve(5));
 
 const mockTransaction = {
   question: {
@@ -108,7 +198,6 @@ jest.spyOn(prisma, "$transaction").mockImplementation(
 
 jest.spyOn(prisma.survey, "findMany").mockImplementation(findManySurveysMock as any);
 jest.spyOn(prisma.survey, "count").mockImplementation(countManySurveysMock as any);
-jest.spyOn(prisma.survey, "findUnique").mockImplementation(findUniqueSurveyMock as any);
 
 describe("Prisma AddSurvey Repository", () => {
   it("should successfully add a survey", async () => {
@@ -453,6 +542,14 @@ describe("Prisma CountManySurveys Repository", () => {
 });
 
 describe("Prisma FindOneSurvey Repository", () => {
+  const findUniqueSpy = jest.spyOn(prisma.survey, "findUnique");
+
+  beforeEach(() => {
+    findUniqueSpy.mockReset();
+
+    findUniqueSpy.mockImplementationOnce(findUniqueSurveyMock as any);
+  });
+
   it("should successfully find a survey", async () => {
     const { SUT } = getSUTEnvironment();
 
@@ -522,7 +619,9 @@ describe("Prisma FindOneSurvey Repository", () => {
       id: "test-survey-id"
     };
 
-    jest.spyOn(prisma.survey, "findUnique").mockImplementationOnce(
+    findUniqueSpy.mockReset();
+
+    findUniqueSpy.mockImplementationOnce(
       () => {
         throw new Error("Test error");
       }
@@ -530,5 +629,115 @@ describe("Prisma FindOneSurvey Repository", () => {
 
     const SUTResponse = SUT.findOne(SUTRequest);
     await expect(SUTResponse).rejects.toThrow();
+  });
+});
+
+describe("Prisma FindOneSurveyWithResult Repository", () => {
+  const findUniqueSpy = jest.spyOn(prisma.survey, "findUnique");
+
+  beforeEach(() => {
+    findUniqueSpy.mockReset();
+
+    findUniqueSpy.mockImplementationOnce(findUniqueSurveyWithResultMock as any);
+  });
+
+  it("should successfully find a survey with result", async () => {
+    const { SUT } = getSUTEnvironment();
+
+    const SUTRequest = {
+      id: "test-survey-id"
+    };
+
+    const SUTResponse = await SUT.findOneWithResult(SUTRequest);
+
+    const expectedResponse = {
+      id: "test-survey-id",
+      title: "Test Survey Title",
+      description: "test survey description",
+      expiresAt: null,
+      accountId: "test-account-id-1",
+      questions: [
+        {
+          id: "test-question-id",
+          title: "Test Question Title",
+          description: "test question description",
+          type: "SINGLE",
+          surveyId: "test-survey-id",
+          answers: [
+            {
+              id: "test-answer-id-1",
+              body: "test answer body 1",
+              questionId: "test-question-id",
+              userAnswers: [
+                {
+                  id: "test-user-answer-id-1",
+                  accountId: "test-account-id-1",
+                  questionId: "test-question-id",
+                  answerId: "test-answer-id-1"
+                },
+
+                {
+                  id: "test-user-answer-id-2",
+                  accountId: "test-account-id-2",
+                  questionId: "test-question-id",
+                  answerId: "test-answer-id-1"
+                }
+              ]
+            },
+
+            {
+              id: "test-answer-id-2",
+              body: "test answer body 2",
+              questionId: "test-question-id",
+              userAnswers: [
+                {
+                  id: "test-user-answer-id-3",
+                  accountId: "test-account-id-3",
+                  questionId: "test-question-id",
+                  answerId: "test-answer-id-2"
+                },
+
+                {
+                  id: "test-user-answer-id-4",
+                  accountId: "test-account-id-4",
+                  questionId: "test-question-id",
+                  answerId: "test-answer-id-2"
+                },
+
+                {
+                  id: "test-user-answer-id-5",
+                  accountId: "test-account-id-5",
+                  questionId: "test-question-id",
+                  answerId: "test-answer-id-2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      userAnsweredSurveys: [
+        {
+          id: "test-user-answer-id-1"
+        },
+
+        {
+          id: "test-user-answer-id-2"
+        },
+
+        {
+          id: "test-user-answer-id-3"
+        },
+
+        {
+          id: "test-user-answer-id-4"
+        },
+
+        {
+          id: "test-user-answer-id-5"
+        }
+      ]
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
   });
 });
