@@ -9,6 +9,6 @@ export namespace Controller {
   export type Response = Promise<HttpResponse>;
 
   export interface Protocol {
-    handle: (httpRequest: Request) => Response;
+    handle(httpRequest: Controller.Request): Controller.Response;
   }
 }
