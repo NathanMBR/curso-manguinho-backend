@@ -2,7 +2,8 @@ import {
   AddSurveyRepository,
   FindManySurveysRepository,
   CountManySurveysRepository,
-  FindOneSurveyRepository
+  FindOneSurveyRepository,
+  FindOneSurveyWithResultRepository
 } from "../../../../data/protocols";
 import { prisma } from "../prisma";
 
@@ -10,7 +11,8 @@ export class PrismaSurveyRepository implements
   AddSurveyRepository.Protocol,
   FindManySurveysRepository.Protocol,
   CountManySurveysRepository.Protocol,
-  FindOneSurveyRepository.Protocol
+  FindOneSurveyRepository.Protocol,
+  FindOneSurveyWithResultRepository.Protocol
 {
   async add(request: AddSurveyRepository.Request): AddSurveyRepository.Response {
     const {
@@ -134,5 +136,37 @@ export class PrismaSurveyRepository implements
     );
 
     return survey;
+  }
+
+  async findOneWithResult(request: FindOneSurveyWithResultRepository.Request): FindOneSurveyWithResultRepository.Response {
+    const { id } = request;
+
+    const surveyWithResult = await prisma.survey.findUnique(
+      {
+        where: {
+          id
+        },
+
+        include: {
+          questions: {
+            include: {
+              answers: {
+                include: {
+                  userAnswers: true
+                }
+              }
+            }
+          },
+
+          userAnsweredSurveys: {
+            select: {
+              id: true
+            }
+          }
+        }
+      }
+    );
+
+    return surveyWithResult;
   }
 }
