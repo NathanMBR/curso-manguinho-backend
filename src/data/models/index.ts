@@ -4,5 +4,6 @@ export * from "./RepositoryQuestion";
 export * from "./RepositorySurvey";
 export * from "./RepositoryUserAnswer";
 export * from "./RepositoryUserAnsweredSurvey";
+export * from "./RepositorySurveyWithResult";
 
 export * from "./RepositoryPagination";
