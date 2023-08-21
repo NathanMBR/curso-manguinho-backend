@@ -16,6 +16,7 @@ import {
   DbAddUserAnswer,
   DbFindOneUserAnsweredSurvey
 } from "../../../data/usecases";
+import { prisma } from "../../config";
 import { AddSurveyAnswerController } from "../../../presentation/controllers";
 import { PinoLoggerAdapter } from "../../../infra/log";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
@@ -27,9 +28,9 @@ export const makeAddSurveyAnswerController = () => {
   const findOneSurveyValidatorAdapter = new FindOneSurveyValidatorAdapter(findOneSurveyValidator);
   const addUserAnswerValidatorAdapter = new AddUserAnswerValidatorAdapter(addUserAnswerValidator);
 
-  const surveyRepository = new PrismaSurveyRepository();
-  const userAnswerRepository = new PrismaUserAnswerRepository();
-  const userAnsweredSurveyRepository = new PrismaUserAnsweredSurveyRepository();
+  const surveyRepository = new PrismaSurveyRepository(prisma);
+  const userAnswerRepository = new PrismaUserAnswerRepository(prisma);
+  const userAnsweredSurveyRepository = new PrismaUserAnsweredSurveyRepository(prisma);
 
   const dbFindOneSurvey = new DbFindOneSurvey(surveyRepository);
   const dbAddUserAnswer = new DbAddUserAnswer(userAnswerRepository);

@@ -2,6 +2,7 @@ import { ZodFindOneSurveyValidator } from "../../../infra/validators";
 import { FindOneSurveyValidatorAdapter } from "../../../validation/adapters";
 import { PrismaSurveyRepository } from "../../../infra/db";
 import { DbFindOneSurvey } from "../../../data/usecases";
+import { prisma } from "../../config";
 import { FindOneSurveyController } from "../../../presentation/controllers";
 import { PinoLoggerAdapter } from "../../../infra/log";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
@@ -10,7 +11,7 @@ export const makeFindOneSurveyController = () => {
   const validator = new ZodFindOneSurveyValidator();
   const validatorAdapter = new FindOneSurveyValidatorAdapter(validator);
 
-  const surveyRepository = new PrismaSurveyRepository();
+  const surveyRepository = new PrismaSurveyRepository(prisma);
 
   const dbFindOneSurvey = new DbFindOneSurvey(
     surveyRepository

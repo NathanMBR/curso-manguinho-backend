@@ -15,6 +15,7 @@ import {
 import { LogInValidatorAdapter } from "../../../validation/adapters";
 import { LogInController } from "../../../presentation/controllers";
 import { PrismaAccountRepository } from "../../../infra/db";
+import { prisma } from "../../config";
 import { ZodLogInValidator } from "../../../infra/validators";
 import { PinoLoggerAdapter } from "../../../infra/log";
 import { ErrorHandlerControllerDecorator } from "../../decorators";
@@ -29,7 +30,7 @@ export const makeLogInController = () => {
     jwtExpirationTime
   );
 
-  const accountRepository = new PrismaAccountRepository();
+  const accountRepository = new PrismaAccountRepository(prisma);
 
   const dbFindOneAccountByEmail = new DbFindOneAccountByEmail(accountRepository);
   const dbCompareAccountPassword = new DbCompareAccountPassword(encrypter);

@@ -6,6 +6,7 @@ import { SignUpValidatorAdapter } from "../../../validation/adapters";
 import { SignUpController } from "../../../presentation/controllers";
 import { BcryptAdapter } from "../../../infra/cryptography";
 import { PrismaAccountRepository } from "../../../infra/db";
+import { prisma } from "../../config";
 import { ZodSignUpValidator } from "../../../infra/validators";
 import { PinoLoggerAdapter } from "../../../infra/log";
 import { bcryptHashRounds } from "../../config";
@@ -18,7 +19,7 @@ export const makeSignUpController = () => {
   );
 
   const encrypter = new BcryptAdapter(bcryptHashRounds);
-  const accountRepository = new PrismaAccountRepository();
+  const accountRepository = new PrismaAccountRepository(prisma);
 
   const dbFindOneAccountByEmail = new DbFindOneAccountByEmail(
     accountRepository
