@@ -1,14 +1,19 @@
-import { FindOneUserAnsweredSurveyRepository } from "../../../../data/protocols";
-import { prisma } from "../prisma";
+import { PrismaClient } from "@prisma/client";
+
+import { FindOneUserAnsweredSurveyRepository } from "../../../data/protocols";
 
 export class PrismaUserAnsweredSurveyRepository implements FindOneUserAnsweredSurveyRepository.Protocol {
+  constructor(
+    private readonly prisma: PrismaClient
+  ) {}
+
   async findOne(request: FindOneUserAnsweredSurveyRepository.Request): FindOneUserAnsweredSurveyRepository.Response {
     const {
       accountId,
       surveyId
     } = request;
 
-    const userAnsweredSurvey = await prisma.userAnsweredSurvey.findFirst(
+    const userAnsweredSurvey = await this.prisma.userAnsweredSurvey.findFirst(
       {
         where: {
           accountId,

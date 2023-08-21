@@ -1,15 +1,20 @@
+import { PrismaClient } from "@prisma/client";
+
 import {
   AddAccountRepository,
   FindOneAccountRepository,
   FindOneAccountByEmailRepository
-} from "../../../../data/protocols";
-import { prisma } from "../prisma";
+} from "../../../data/protocols";
 
 export class PrismaAccountRepository implements
   AddAccountRepository.Protocol,
   FindOneAccountRepository.Protocol,
   FindOneAccountByEmailRepository.Protocol
 {
+  constructor(
+    private readonly prisma: PrismaClient
+  ) {}
+
   async add(accountData: AddAccountRepository.Request) {
     const {
       name,
@@ -17,7 +22,7 @@ export class PrismaAccountRepository implements
       password
     } = accountData;
 
-    const account = await prisma.account.create(
+    const account = await this.prisma.account.create(
       {
         data: {
           name,
@@ -33,7 +38,7 @@ export class PrismaAccountRepository implements
   async findOne(search: FindOneAccountRepository.Request) {
     const { id } = search;
 
-    const account = await prisma.account.findUnique(
+    const account = await this.prisma.account.findUnique(
       {
         where: {
           id
@@ -47,7 +52,7 @@ export class PrismaAccountRepository implements
   async findOneByEmail(search: FindOneAccountByEmailRepository.Request) {
     const { email } = search;
 
-    const account = await prisma.account.findFirst(
+    const account = await this.prisma.account.findFirst(
       {
         where: {
           email

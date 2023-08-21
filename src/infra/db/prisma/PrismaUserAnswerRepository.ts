@@ -1,7 +1,12 @@
-import { AddUserAnswerRepository } from "../../../../data/protocols";
-import { prisma } from "../prisma";
+import { PrismaClient } from "@prisma/client";
+
+import { AddUserAnswerRepository } from "../../../data/protocols";
 
 export class PrismaUserAnswerRepository implements AddUserAnswerRepository.Protocol {
+  constructor(
+    private readonly prisma: PrismaClient
+  ) {}
+
   async add(request: AddUserAnswerRepository.Request): AddUserAnswerRepository.Response {
     const {
       accountId,
@@ -9,7 +14,7 @@ export class PrismaUserAnswerRepository implements AddUserAnswerRepository.Proto
       userAnswers
     } = request;
 
-    await prisma.$transaction(
+    await this.prisma.$transaction(
       async transaction => {
         await transaction.userAnsweredSurvey.create(
           {

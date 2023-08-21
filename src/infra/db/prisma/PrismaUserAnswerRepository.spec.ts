@@ -5,16 +5,20 @@ import {
   expect,
   jest
 } from "@jest/globals";
+import { PrismaClient } from "@prisma/client";
 
-import { prisma } from "../prisma";
 import { PrismaUserAnswerRepository } from "./PrismaUserAnswerRepository";
+
+const prisma = new PrismaClient();
 
 interface GetSUTEnvironmentResponse {
   SUT: PrismaUserAnswerRepository;
 }
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
-  const userAnswerRepository = new PrismaUserAnswerRepository();
+  const userAnswerRepository = new PrismaUserAnswerRepository(
+    prisma
+  );
 
   return {
     SUT: userAnswerRepository

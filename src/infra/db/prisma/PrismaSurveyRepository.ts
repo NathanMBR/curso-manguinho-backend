@@ -1,11 +1,12 @@
+import { PrismaClient } from "@prisma/client";
+
 import {
   AddSurveyRepository,
   FindManySurveysRepository,
   CountManySurveysRepository,
   FindOneSurveyRepository,
   FindOneSurveyWithResultRepository
-} from "../../../../data/protocols";
-import { prisma } from "../prisma";
+} from "../../../data/protocols";
 
 export class PrismaSurveyRepository implements
   AddSurveyRepository.Protocol,
@@ -14,6 +15,10 @@ export class PrismaSurveyRepository implements
   FindOneSurveyRepository.Protocol,
   FindOneSurveyWithResultRepository.Protocol
 {
+  constructor(
+    private readonly prisma: PrismaClient
+  ) {}
+
   async add(request: AddSurveyRepository.Request): AddSurveyRepository.Response {
     const {
       title,
@@ -23,7 +28,7 @@ export class PrismaSurveyRepository implements
       accountId
     } = request;
 
-    const survey = await prisma.$transaction(
+    const survey = await this.prisma.$transaction(
       async transaction => {
         const surveyId = await transaction.survey.create(
           {
@@ -98,7 +103,7 @@ export class PrismaSurveyRepository implements
       take
     } = request;
 
-    const surveys = await prisma.survey.findMany(
+    const surveys = await this.prisma.survey.findMany(
       {
         skip,
         take
@@ -109,7 +114,7 @@ export class PrismaSurveyRepository implements
   }
 
   async countMany(_request: CountManySurveysRepository.Request): CountManySurveysRepository.Response {
-    const count = await prisma.survey.count();
+    const count = await this.prisma.survey.count();
 
     return count;
   }
@@ -119,7 +124,7 @@ export class PrismaSurveyRepository implements
       id
     } = request;
 
-    const survey = await prisma.survey.findUnique(
+    const survey = await this.prisma.survey.findUnique(
       {
         where: {
           id
@@ -141,7 +146,7 @@ export class PrismaSurveyRepository implements
   async findOneWithResult(request: FindOneSurveyWithResultRepository.Request): FindOneSurveyWithResultRepository.Response {
     const { id } = request;
 
-    const surveyWithResult = await prisma.survey.findUnique(
+    const surveyWithResult = await this.prisma.survey.findUnique(
       {
         where: {
           id

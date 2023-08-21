@@ -4,17 +4,21 @@ import {
   expect,
   jest
 } from "@jest/globals";
+import { PrismaClient } from "@prisma/client";
 
-import { prisma } from "../prisma";
 import { PrismaAccountRepository } from "./PrismaAccountRepository";
+
+const prisma = new PrismaClient();
 
 interface GetSUTEnvironmentResponse {
   SUT: PrismaAccountRepository
 }
 
 const getSUTEnvironment = (): GetSUTEnvironmentResponse => {
-  const SUT = new PrismaAccountRepository();
-  
+  const SUT = new PrismaAccountRepository(
+    prisma
+  );
+
   return {
     SUT
   };
@@ -192,7 +196,7 @@ describe("Prisma FindOneAccountByEmail Repository", () => {
     const searchData = {
       email: "search@email.com"
     };
-  
+
     const SUTResponse = SUT.findOneByEmail(searchData);
     await expect(SUTResponse).rejects.toThrow();
   });
