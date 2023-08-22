@@ -23,7 +23,7 @@ export class DbFindManySurveys implements FindManySurveys.Protocol {
     ] = await Promise.all(
       [
         this.findManySurveysRepository.findMany(repositoryPaginationParameters),
-        this.countManySurveysRepository.countMany(repositoryPaginationParameters)
+        this.countManySurveysRepository.countMany()
       ]
     );
 

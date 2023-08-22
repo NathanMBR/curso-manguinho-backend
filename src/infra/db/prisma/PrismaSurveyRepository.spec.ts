@@ -514,12 +514,7 @@ describe("Prisma CountManySurveys Repository", () => {
   it("should successfully count many surveys", async () => {
     const { SUT } = getSUTEnvironment();
 
-    const SUTRequest = {
-      take: 10,
-      skip: 0
-    };
-
-    const SUTResponse = await SUT.countMany(SUTRequest);
+    const SUTResponse = await SUT.countMany();
 
     const expectedResponse = 5;
 
@@ -529,18 +524,13 @@ describe("Prisma CountManySurveys Repository", () => {
   it("should repass prisma errors to upper level", async () => {
     const { SUT } = getSUTEnvironment();
 
-    const SUTRequest = {
-      take: 10,
-      skip: 0
-    };
-
     jest.spyOn(prisma.survey, "count").mockImplementationOnce(
       () => {
         throw new Error("Test error");
       }
     );
 
-    const SUTResponse = SUT.countMany(SUTRequest);
+    const SUTResponse = SUT.countMany();
     await expect(SUTResponse).rejects.toThrow();
   });
 });

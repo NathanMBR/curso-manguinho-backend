@@ -113,7 +113,7 @@ export class PrismaSurveyRepository implements
     return surveys;
   }
 
-  async countMany(_request: CountManySurveysRepository.Request): CountManySurveysRepository.Response {
+  async countMany(): CountManySurveysRepository.Response {
     const count = await this.prisma.survey.count();
 
     return count;
