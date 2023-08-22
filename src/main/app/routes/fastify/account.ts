@@ -8,8 +8,8 @@ import {
 import {
   makeSignUpController,
   makeLogInController
-} from "../../factories";
-import { fastifyRouteAdapter } from "../../adapters";
+} from "../../../factories";
+import { fastifyRouteAdapter } from "../../../adapters";
 
 export const accountRoutes = (
   app: FastifyInstance,
