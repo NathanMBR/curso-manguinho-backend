@@ -187,6 +187,91 @@ describe("DbGetSurveyResult UseCase", () => {
     expect(SUTResponse).toBeNull();
   });
 
+  it("should return zero in all percentages if survey has no user answers", async () => {
+    const { SUT, findOneSurveyWithResultRepository } = getSUTEnvironment();
+
+    jest.spyOn(findOneSurveyWithResultRepository, "findOneWithResult").mockReturnValueOnce(
+      Promise.resolve(
+        {
+          id: "test-survey-id",
+          title: "Test Survey Title",
+          description: "test survey description",
+          expiresAt: null,
+          accountId: "test-account-id-1",
+          questions: [
+            {
+              id: "test-question-id",
+              title: "Test Question Title",
+              description: "test question description",
+              type: "SINGLE",
+              surveyId: "test-survey-id",
+              answers: [
+                {
+                  id: "test-answer-id-1",
+                  body: "test answer body 1",
+                  questionId: "test-question-id",
+                  userAnswers: []
+                },
+
+                {
+                  id: "test-answer-id-2",
+                  body: "test answer body 2",
+                  questionId: "test-question-id",
+                  userAnswers: []
+                }
+              ]
+            }
+          ],
+          userAnsweredSurveys: []
+        }
+      )
+    );
+
+    const SUTRequest = {
+      surveyId: "test-survey-id"
+    };
+
+    const SUTResponse = await SUT.get(SUTRequest);
+
+    const expectedResponse = {
+      survey: {
+        id: "test-survey-id",
+        title: "Test Survey Title"
+      },
+
+      timesAnswered: 0,
+
+      questions: [
+        {
+          question: {
+            id: "test-question-id",
+            title: "Test Question Title",
+            type: "SINGLE"
+          },
+          answers: [
+            {
+              answer: {
+                id: "test-answer-id-1",
+                body: "test answer body 1"
+              },
+              percentage: 0
+            },
+
+            {
+              answer: {
+                id: "test-answer-id-2",
+                body: "test answer body 2"
+              },
+              percentage: 0
+            }
+          ]
+        }
+      ]
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
   it("should pass survey id to find one survey with result repository call", async () => {
     const { SUT, findOneSurveyWithResultRepository } = getSUTEnvironment();
 
