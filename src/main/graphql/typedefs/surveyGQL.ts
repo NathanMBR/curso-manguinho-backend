@@ -19,6 +19,14 @@ export const surveyGQL = `#graphql
     answers: [Answer!]!
   }
 
+  type SurveyWithoutQuestions {
+    id: String!
+    title: String!
+    description: String
+    expiresAt: String
+    accountId: String!
+  }
+
   type Survey {
     id: String!
     title: String!
@@ -56,33 +64,44 @@ export const surveyGQL = `#graphql
     total: Int!
     currentPage: Int!
     lastPage: Int!
-    data: [Survey!]!
+    data: [SurveyWithoutQuestions!]!
+  }
+
+  type AnswerResultReduced {
+    id: String!
+    body: String!
   }
 
   type AnswerResult {
-    answer: {
-      id: String!
-      body: String!
-    }
+    answer: AnswerResultReduced!
     percentage: Float!
   }
 
+  type QuestionResultReduced {
+    id: String!
+    title: String!
+    type: QuestionType!
+  }
+
   type QuestionResult {
-    question: {
-      id: String!
-      title: String!
-      type: QuestionType!
-    }
+    question: QuestionResultReduced!
     answers: [AnswerResult!]!
   }
 
+  type SurveyResultReduced {
+    id: String!
+    title: String!
+  }
+
   type SurveyResult {
-    survey: {
-      id: String!
-      title: String!
-    }
+    survey: SurveyResultReduced!
     timesAnswered: Int!
     questions: [QuestionResult!]!
+  }
+
+  input SurveyAnswerInput {
+    questionId: String!
+    answerId: String!
   }
 
   type Query {
@@ -93,6 +112,6 @@ export const surveyGQL = `#graphql
 
   type Mutation {
     addSurvey(body: SurveyInput!): Survey!
-    addSurveyAnswer(body: SurveyAnswerInput): boolean
+    addSurveyAnswer(id: String!, body: [SurveyAnswerInput!]!): Boolean
   }
 `;
