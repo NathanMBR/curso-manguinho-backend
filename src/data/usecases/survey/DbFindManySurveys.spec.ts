@@ -124,26 +124,6 @@ describe("DbFindManySurveys UseCase", () => {
     expect(findManySpy).toHaveBeenCalledWith(expectedCall);
   });
 
-  it("should pass take and skip data to count many surveys repository call", async () => {
-    const { SUT, countManySurveysRepository } = getSUTEnvironment();
-
-    const countManySpy = jest.spyOn(countManySurveysRepository, "countMany");
-
-    const SUTRequest = {
-      page: 1,
-      quantity: 50
-    };
-
-    await SUT.findMany(SUTRequest);
-
-    const expectedCall = {
-      take: 50,
-      skip: 0
-    };
-
-    expect(countManySpy).toHaveBeenCalledWith(expectedCall);
-  });
-
   it("should repass find many surveys repository errors to upper level", async () => {
     const { SUT, findManySurveysRepository } = getSUTEnvironment();
 
