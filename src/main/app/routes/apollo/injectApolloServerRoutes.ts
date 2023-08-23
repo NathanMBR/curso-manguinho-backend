@@ -9,8 +9,10 @@ import {
   ApolloContext,
   typeDefsReducer,
   accountGQL,
+  surveyGQL,
   resolversReducer,
-  accountGQLResolvers
+  accountGQLResolvers,
+  surveyGQLResolvers
 } from "../../../graphql";
 import { APOLLO_SERVER_STACKTRACE } from "../../../config";
 
@@ -19,10 +21,12 @@ export const injectApolloServerRoutes = async (app: FastifyInstance) => {
     {
       includeStacktraceInErrorResponses: APOLLO_SERVER_STACKTRACE,
       typeDefs: typeDefsReducer(
-        accountGQL
+        accountGQL,
+        surveyGQL
       ),
       resolvers: resolversReducer(
-        accountGQLResolvers
+        accountGQLResolvers,
+        surveyGQLResolvers
       ),
 
       plugins: [
