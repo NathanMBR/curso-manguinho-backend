@@ -95,6 +95,9 @@ export const surveyGQLResolvers: Resolver = {
 
       const httpResponseBody = await apolloServerResolverAdapter(
         {
+          params: {
+            id: args.id
+          },
           body: args.body,
           headers: ctx.headers
         },
