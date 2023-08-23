@@ -1,19 +1,21 @@
 import { FastifyInstance } from "fastify";
-import { ApolloServer, BaseContext } from "@apollo/server";
-import fastifyApollo, { fastifyApolloDrainPlugin } from "@as-integrations/fastify";
+import { ApolloServer } from "@apollo/server";
+import fastifyApollo, {
+  fastifyApolloDrainPlugin,
+  ApolloFastifyContextFunction
+} from "@as-integrations/fastify";
 
 import {
+  ApolloContext,
+  typeDefsReducer,
   accountGQL,
+  resolversReducer,
   accountGQLResolvers
 } from "../../../graphql";
 import { APOLLO_SERVER_STACKTRACE } from "../../../config";
-import {
-  typeDefsReducer,
-  resolversReducer
-} from "../../../graphql";
 
 export const injectApolloServerRoutes = async (app: FastifyInstance) => {
-  const apolloServer = new ApolloServer<BaseContext>(
+  const apolloServer = new ApolloServer<ApolloContext>(
     {
       includeStacktraceInErrorResponses: APOLLO_SERVER_STACKTRACE,
       typeDefs: typeDefsReducer(
@@ -22,6 +24,7 @@ export const injectApolloServerRoutes = async (app: FastifyInstance) => {
       resolvers: resolversReducer(
         accountGQLResolvers
       ),
+
       plugins: [
         fastifyApolloDrainPlugin(app)
       ]
@@ -30,6 +33,19 @@ export const injectApolloServerRoutes = async (app: FastifyInstance) => {
 
   await apolloServer.start();
 
+  const apolloFastifyContextHandler: ApolloFastifyContextFunction<ApolloContext> = async request => {
+    return {
+      headers: {
+        authorization: request.headers.authorization
+      }
+    }
+  };
+
   const fastifyApolloPlugin = fastifyApollo(apolloServer);
-  await app.register(fastifyApolloPlugin, { prefix: "/graphql" });
+  const fastifyApolloPluginOptions = {
+    prefix: "/graphql",
+    context: apolloFastifyContextHandler
+  };
+
+  await app.register(fastifyApolloPlugin, fastifyApolloPluginOptions);
 };
