@@ -54,7 +54,7 @@ describe("JWT Adapter Sign Method", () => {
         test: "test data"
       }
     };
-    
+
     const SUTResponse = SUT.sign(SUTRequest);
 
     expect(SUTResponse).toBe("test-token");
@@ -66,7 +66,7 @@ describe("JWT Adapter Sign Method", () => {
     const SUTRequest = {
       id: "test-id"
     };
-    
+
     const SUTResponse = SUT.sign(SUTRequest);
 
     expect(SUTResponse).toBe("test-token");
@@ -79,7 +79,7 @@ describe("JWT Adapter Sign Method", () => {
     const SUTRequest = {
       id: "test-id"
     };
-    
+
     const SUTResponse = SUT.sign(SUTRequest);
 
     expect(SUTResponse).toBe("test-token");
@@ -132,7 +132,7 @@ describe("JWT Adapter Sign Method", () => {
         test: "test data"
       }
     };
-    
+
     const getSUTResponse = () => SUT.sign(SUTRequest);
 
     expect(getSUTResponse).toThrow();
@@ -153,6 +153,27 @@ describe("JWT Adapter Verify Method", () => {
       isValid: true,
       tokenData: {
         test: "test data"
+      }
+    };
+
+    expect(SUTResponse).toEqual(expectedResponse);
+  });
+
+  it("should return object with 'data' property if jwt verify returns string", () => {
+    const { SUT } = getSUTEnvironment();
+
+    jest.spyOn(jwt, "verify").mockReturnValueOnce("test data" as any);
+
+    const SUTRequest = {
+      token: "test-token"
+    };
+
+    const SUTResponse = SUT.verify(SUTRequest);
+
+    const expectedResponse = {
+      isValid: true,
+      tokenData: {
+        data: "test data"
       }
     };
 
