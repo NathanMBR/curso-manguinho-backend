@@ -1,6 +1,6 @@
 # curso-manguinho-backend
 
-Curso de Clean Architecture em Node.js do Rodrigo Manguinho.
+Curso de Clean Architecture em Node.js do Rodrigo Manguinho. Uma API de pesquisas que responde em REST e GraphQL.
 
 ## Requirements
 
